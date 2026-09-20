@@ -1,0 +1,13 @@
+PyMuPDF                     # PDF okuma ve metin temizleme
+pandas                      # PDF okuma ve metin temizleme
+numpy                       # Embedding çıkarma ve vektör arama
+sentence-transformers       # Embedding çıkarma ve vektör arama
+chromadb                    # Embedding çıkarma ve vektör arama
+transformers                # LoRA adaptasyonu ve model eğitimi
+datasets                    # LoRA adaptasyonu ve model eğitimi
+peft                        # LoRA adaptasyonu ve model eğitimi
+trl                         # LoRA adaptasyonu ve model eğitimi
+accelerate                  # LoRA adaptasyonu ve model eğitimi
+pydantic                    # Sentetik QA üretiminde şema doğrulaması
+python-dotenv               # Güvenli konfigürasyon yönetimi 
+pytest                      # Birim ve entegrasyon testleri
