@@ -33,9 +33,8 @@ def load_pdfs(directory: str | Path):
     """Read all PDFs in a directory."""
     directory = Path(directory)
     documents = []
-    filename = directory.name
 
     for pdf in sorted(directory.glob("*.pdf")):
         documents.extend(load_pdf(pdf))
 
-    return documents, filename
+    return documents
