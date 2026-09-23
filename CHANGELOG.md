@@ -23,3 +23,12 @@
 - Alan içi döküman kullanımı dikakte alınarak yüksek threshold tercih edildi.
 - schemas.py dikkate alınarak chunk düzeni korundu
 - rag.ipynb üzerinden testler yapıldı
+- Gelişmeler coomit edilip push'landı
+## Gün-4 23.09.2026
+### Faz-3 Tamamlandı
+- embedding.py oluşturuldu
+- Embedding modeli yapılandırıldı
+- vector_store.py oluşturuldu
+- Vector Database yapılandırıldı
+- rag.ipynb üzerinden Chunk + embedding + metadata test kayıtları oluşturuldu
+- 
