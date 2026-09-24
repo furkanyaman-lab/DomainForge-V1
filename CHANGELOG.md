@@ -23,12 +23,22 @@
 - Alan içi döküman kullanımı dikakte alınarak yüksek threshold tercih edildi.
 - schemas.py dikkate alınarak chunk düzeni korundu
 - rag.ipynb üzerinden testler yapıldı
-- Gelişmeler coomit edilip push'landı
+- Gelişmeler commit edilip push'landı
 ## Gün-4 23.09.2026
 ### Faz-3 Tamamlandı
 - embedding.py oluşturuldu
-- Embedding modeli yapılandırıldı
+- Embedding modeli hızlı protoripleme sebebiyle all-MiniLM-L6-v2 modeli üzerinden yapılandırıldı
 - vector_store.py oluşturuldu
 - Vector Database yapılandırıldı
 - rag.ipynb üzerinden Chunk + embedding + metadata test kayıtları oluşturuldu
-- 
+- Gelişmeler commit edilip push'landı
+### Faz-4 Tamamlandı
+- retriever.py oluşturuldu
+- Top-K, 4 olarak belirlendi
+- Retrieved context şema/yapısı oluşturuldu
+- app/generation/prompts.py üzerinde RAG prompt yapısı oluşturuldu
+- Context -> LLM akışı sağlandı
+- Retrieval sonuçlarının yetersiz görülmesinin ardından embedding ve retrieval aşamaları için all-MiniLM-L6-v2 modelinden daha yüksek kapasiteli BAAI/bge-base-en-v1.5 modeline geçildi.
+- Gelişmeler commit edilip push'landı.
+## Gün-5 24.09.2026
+### Faz-5
