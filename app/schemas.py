@@ -1,4 +1,6 @@
 from pydantic import BaseModel, Field
+from typing import List, Optional
+from enum import Enum
 
 class Document(BaseModel):
     document_id: str
@@ -49,3 +51,23 @@ class RetrievedContext(BaseModel):
         description="Cosine similarity score indicating relevance to the query (1.0 = identical, -1.0 = opposite)",
         examples=[0.8421],
     )
+
+class QuestionDepth(str, Enum):
+    FOUNDATIONAL = "foundational"
+    TECHNICAL = "technical"
+    COMPARATIVE = "comparative"
+
+class GenerationProfile(BaseModel):
+    question_count: int = Field(default=1, ge=1, le=5, description="Number of questions to be generated from each context")
+    answer_length: str = Field(default="detailed", description="Answer length: concise, moderate, detailed")
+    depth: QuestionDepth = Field(default=QuestionDepth.TECHNICAL, description="The level of technical depth of the question")
+    temperature: float = Field(default=0.2, ge=0.0, le=1.0, description="LLM temperature value (low = more faithful)")
+
+class GeneratedQA(BaseModel):
+    question: str = Field(..., min_length=10, description="Generated technical question")
+    answer: str = Field(..., min_length=20, description="Response based solely on the provided context")
+    source: str = Field(..., description="Name of the PDF source on which the answer is based")
+    page: int = Field(..., ge=1, description="Source page number")
+    chunk_id: str = Field(..., description="The chunk ID to which the context belongs")
+    depth: str = Field(..., description="Target depth during production")
+    retrieval_score: float = Field(..., description="Similarity score of the part used")

@@ -11,3 +11,4 @@ accelerate                  # LoRA adaptasyonu ve model eğitimi
 pydantic                    # Sentetik QA üretiminde şema doğrulaması
 python-dotenv               # Güvenli konfigürasyon yönetimi 
 pytest                      # Birim ve entegrasyon testleri
+ollama                      # Local model entegrasyonu

@@ -42,3 +42,4 @@
 - Gelişmeler commit edilip push'landı.
 ## Gün-5 24.09.2026
 ### Faz-5
+- GenerationProfile ve GeneratedQA veri sözleşmeleri schemas.py üzerinden oluşturuldu 
