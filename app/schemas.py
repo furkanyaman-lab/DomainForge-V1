@@ -58,9 +58,9 @@ class QuestionDepth(str, Enum):
     COMPARATIVE = "comparative"
 
 class GenerationProfile(BaseModel):
-    question_count: int = Field(default=1, ge=1, le=5, description="Number of questions to be generated from each context")
+    question_count: int = Field(default=2, ge=1, le=5, description="Number of questions to be generated from each context")
     answer_length: str = Field(default="detailed", description="Answer length: concise, moderate, detailed")
-    depth: QuestionDepth = Field(default=QuestionDepth.TECHNICAL, description="The level of technical depth of the question")
+    depth: QuestionDepth = Field(default=QuestionDepth.COMPARATIVE, description="The level of technical depth of the question")
     temperature: float = Field(default=0.2, ge=0.0, le=1.0, description="LLM temperature value (low = more faithful)")
 
 class GeneratedQA(BaseModel):
@@ -71,3 +71,14 @@ class GeneratedQA(BaseModel):
     chunk_id: str = Field(..., description="The chunk ID to which the context belongs")
     depth: str = Field(..., description="Target depth during production")
     retrieval_score: float = Field(..., description="Similarity score of the part used")
+
+class ContextSourceReference(BaseModel):
+    source: str
+    page: int
+    chunk_id: str
+
+class SynthesizedQA(BaseModel):
+    question : str = Field(..., min_length=15, description="A synthesised technical question")
+    answer: str = Field(..., min_length=40, description="A comprehensive answer based on a comparison of sources")
+    sources: List[ContextSourceReference] = Field(..., description="All the contexts on which the answer is based")
+    depth: str

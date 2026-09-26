@@ -42,4 +42,17 @@
 - Gelişmeler commit edilip push'landı.
 ## Gün-5 24.09.2026
 ### Faz-5
-- GenerationProfile ve GeneratedQA veri sözleşmeleri schemas.py üzerinden oluşturuldu 
+- GenerationProfile ve GeneratedQA veri sözleşmeleri schemas.py üzerinden oluşturuldu
+- Şema üzerinden Question Count, Answer Legnth, Temperature vb hiperparametreler belirlendi.
+- prompts.py üzerinden kaynak temelli Q/A Generation promptu oluşturuldu.
+- qa_generator.py oluşturuldu.
+- Generating mimarisinde Source, page ve chunk ID bilgisini korundu
+- generation.ipynb üzerinden ilk testler yapıldı.
+## Gün-6 25.09.2026
+### Faz-5
+- Çıktılar yetersiz bulunduğundan "Single-Chunk Bias" (Tekil Parça Önyargısı) aşılmak için iki aşamalı arama (Retrieval -> Reranking -> Çoklu Bağlam Sentezi) mimarisine geçildi.
+- schema.py, prompts.py ve qa_generator.py üzerinde ilgili değişiklikler yapıldı.
+- reranker.py oluşturuldu.
+- Sistemin vektörel sıralamada 20 seçim yapması, ardından LLM yardımıyla bulduğu en uygun 5 chunk üzerinden yanıt oluşturması sağlandı
+- Üretilen yanıtlar derinlik ve teknik anlamda yeterli bulundu. (Sadece LLM'den kaynaklı kaynak bazında halüsinasyon görmesinin engellenmesi maksadıyla sistem promptuna negatif prompt/kısıtlama eklendi)
+- Gelişmeler commit edilip push'landı.

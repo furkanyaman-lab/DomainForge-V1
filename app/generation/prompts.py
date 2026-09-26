@@ -76,3 +76,49 @@ Output must match this exact JSON structure:
 {json.dumps(schema_format, indent=2)}
 
 JSON Output:"""
+
+SYSTEM_CROSS_SYNTHESIZER = """You are a Principal AI Governance Architect and Lead Benchmark Evaluator.
+Your task is to synthesize MULTIPLE reference contexts to generate deep, multi-perspective Question/Answer pairs.
+
+Strict Rules:
+1. Cross-Context Synthesis: Connect, compare, or harmonize mechanisms across AT LEAST TWO different references provided.
+2. Grounding & Zero Extrapolation: Base both the question and answer STRICTLY on the provided text. Do not mention or extrapolate external frameworks, laws, or acts (e.g., EU AI Act, GDPR) unless they are explicitly referenced inside the verified context blocks.
+3. Natural Phrasing: NEVER include metadata like 'chunk_id', 'page number', or 'filename.pdf' inside the question or answer text.
+4. Output Format: Respond ONLY with a valid raw JSON object matching the requested schema."""
+
+def build_synthesized_qa_prompt(
+        contexts: List[RetrievedContext],
+        profile: GenerationProfile,
+) -> str:
+    
+    blocks = []
+    for i, c in enumerate(contexts, 1):
+        blocks.append(
+            f"[REF{i}] Document: {c.source} (Page {c.page}) | ID: {c.chunk_id} \n {c.text}"
+        )
+        combined_contexts = "\n\n".join(blocks)
+
+        schema_format = {
+            "pairs" : [
+                {
+                "question": "Deep technical question synthesizing governance mechanisms across references",
+                "answer": "Comprehensive answer connecting the principles and controls without citing chunk IDs",
+                "used_reference_numbers": [1, 2]
+                }
+            ]
+        }
+
+        return f"""{SYSTEM_CROSS_SYNTHESIZER}
+
+### Verified References:
+{combined_contexts}
+
+### Directives:
+- Target Depth: {profile.depth.value.upper()}
+- Target Question Count: {profile.question_count}
+- Answer Style: {profile.answer_length}
+
+Output must match this exact Json structure:
+{json.dumps(schema_format, indent=2)}
+
+JSON Output:"""
