@@ -65,3 +65,11 @@
 - prompts.py üzerinden negatif promptlar genişletildi, çıktılar içerisinde .pdf uzantısının geçmesi engellendi 
 - Geçerli ve doğrulanan kayıtlar dataset'e aktarıldı
 - Gelişmeler commit edilip push'landı
+## Gün-8 27.09.2026
+### Faz-7
+- Training example şeması ve train/eval yapısı hazırlandı.
+- formatter.py oluşturuldu.
+- Train ratio 0.8 olarak belirlendi, veriler rastgele dağıtıldı.
+- Veriler jsonl formatında data/final klasörüne kaydedildi.
+- training.ipynb üzerinden testler yapıldı
+- Gelişmeler commit edilip push'landı

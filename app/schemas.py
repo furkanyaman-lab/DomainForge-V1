@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from enum import Enum
 
 class Document(BaseModel):
@@ -90,3 +90,23 @@ class ValidatedQA(BaseModel):
     sources: List[ContextSourceReference]
     depth: str
     validated_at: str
+
+class ChatMessage(BaseModel):
+    role: str = Field(..., description="'system', 'user' or 'asisstant'")
+    content: str
+
+class TrainingExample(BaseModel):
+    messages: List[ChatMessage]
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict,
+        description="Provenance, source chunks and depth information"
+    )
+
+class DatasetSplitSummary(BaseModel):
+    total_count: int
+    train_count: int
+    eval_count: int
+    train_path: str
+    eval_path: str
+
+    
