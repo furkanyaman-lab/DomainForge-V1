@@ -56,3 +56,12 @@
 - Sistemin vektörel sıralamada 20 seçim yapması, ardından LLM yardımıyla bulduğu en uygun 5 chunk üzerinden yanıt oluşturması sağlandı
 - Üretilen yanıtlar derinlik ve teknik anlamda yeterli bulundu. (Sadece LLM'den kaynaklı kaynak bazında halüsinasyon görmesinin engellenmesi maksadıyla sistem promptuna negatif prompt/kısıtlama eklendi)
 - Gelişmeler commit edilip push'landı.
+## Gün-7 26.09.2026
+### Faz-6
+- ValidatedQA şeması hazırlandı.
+- qa_validator.py oluşturuldu.
+- Uzunluk, yasaklı kelime kullanımı ve util.cos_sim kullanılarak benzerlik metrikleri üzerinden sonuçlar kontrol edildi, generation.ipynb üzerinden testler yapıldı
+- torch.stack kullanılarak boyut problemi çözüldü
+- prompts.py üzerinden negatif promptlar genişletildi, çıktılar içerisinde .pdf uzantısının geçmesi engellendi 
+- Geçerli ve doğrulanan kayıtlar dataset'e aktarıldı
+- Gelişmeler commit edilip push'landı

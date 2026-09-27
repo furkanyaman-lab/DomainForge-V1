@@ -83,7 +83,7 @@ Your task is to synthesize MULTIPLE reference contexts to generate deep, multi-p
 Strict Rules:
 1. Cross-Context Synthesis: Connect, compare, or harmonize mechanisms across AT LEAST TWO different references provided.
 2. Grounding & Zero Extrapolation: Base both the question and answer STRICTLY on the provided text. Do not mention or extrapolate external frameworks, laws, or acts (e.g., EU AI Act, GDPR) unless they are explicitly referenced inside the verified context blocks.
-3. Natural Phrasing: NEVER include metadata like 'chunk_id', 'page number', or 'filename.pdf' inside the question or answer text.
+3. Natural Phrasing: Refer to frameworks by their formal names (e.g., 'NIST AI 100-1' or 'NIST AI RMF') instead of raw filenames. NEVER include terms like 'chunk_id', 'Ref ID', 'page number', or file extensions in the question or answer text.
 4. Output Format: Respond ONLY with a valid raw JSON object matching the requested schema."""
 
 def build_synthesized_qa_prompt(
@@ -92,13 +92,16 @@ def build_synthesized_qa_prompt(
 ) -> str:
     
     blocks = []
-    for i, c in enumerate(contexts, 1):
-        blocks.append(
-            f"[REF{i}] Document: {c.source} (Page {c.page}) | ID: {c.chunk_id} \n {c.text}"
-        )
-        combined_contexts = "\n\n".join(blocks)
 
-        schema_format = {
+    for i, c in enumerate(contexts, 1):
+        doc_name = c.source.replace(".pdf", "")
+        blocks.append(
+            f"[REF {i}] Framework: {doc_name} (Page {c.page}) | Ref ID: {c.chunk_id}\n{c.text}"
+        )
+    
+    combined_contexts = "\n\n".join(blocks)
+
+    schema_format = {
             "pairs" : [
                 {
                 "question": "Deep technical question synthesizing governance mechanisms across references",
@@ -108,9 +111,9 @@ def build_synthesized_qa_prompt(
             ]
         }
 
-        return f"""{SYSTEM_CROSS_SYNTHESIZER}
+    return f"""{SYSTEM_CROSS_SYNTHESIZER}
 
-### Verified References:
+### Verified References:  
 {combined_contexts}
 
 ### Directives:

@@ -82,3 +82,11 @@ class SynthesizedQA(BaseModel):
     answer: str = Field(..., min_length=40, description="A comprehensive answer based on a comparison of sources")
     sources: List[ContextSourceReference] = Field(..., description="All the contexts on which the answer is based")
     depth: str
+
+
+class ValidatedQA(BaseModel):
+    question: str
+    answer: str
+    sources: List[ContextSourceReference]
+    depth: str
+    validated_at: str
