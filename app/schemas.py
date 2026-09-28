@@ -109,4 +109,24 @@ class DatasetSplitSummary(BaseModel):
     train_path: str
     eval_path: str
 
-    
+class TrainingProfile(BaseModel):
+    base_model_id: str = "Qwen/Qwen2.5-3B-Instruct"
+    output_dir: str = "models/fine-tuned-governance"
+    learning_rate: float = 2e-4
+    num_train_epochs: int = 3
+    per_device_train_batch_size: int = 2
+    gradient_accumulation_steps: int = 4
+    max_seq_length: int = 1024
+    logging_steps: int = 5
+    save_strategy: str = "epoch"
+    warmup_ratio: float = 0.05
+    seed: int = 42
+
+class LoRAProfile(BaseModel):
+    r: int = 16
+    lora_alpha: int = 32
+    lora_dropout: float = 0.05
+    target_modules: List[str] = Field(
+        default_factory=lambda:["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"] 
+    )
+    bias: str = "none"

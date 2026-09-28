@@ -73,3 +73,17 @@
 - Veriler jsonl formatında data/final klasörüne kaydedildi.
 - training.ipynb üzerinden testler yapıldı
 - Gelişmeler commit edilip push'landı
+## Gün-9 28.09.2026
+### Faz-8
+- model_loader.py oluşturuldu
+- Base model olarak eğitim veri hacmi, performans ve hız dengesi göz önünde bulundurularak "Qwen/Qwen2.5-3B-Instruct" seçildi.
+- Train aşamasının verimle devam edebilmesi için cihaz/donanım tespit fonksiyonu geliştirildi.
+- torch.bfloat16 yapısıyla parametreler 32 bit'ten 16 bit'e indirilerek performans hızlandırıldı.
+- Model/tokenizer uyumluluğu test edildi.
+- lora_config.py oluşturuldu.
+- Neden LoRA? Donanım yeterliliği (Mac Studio m1 Max 32 gb) ve küçük modellerle çalışıldığı için eğitim hızı ve max performans göz önünde bulundurularak LoRA, QLoRA yerine tercih edildi.
+- LoRA configuration oluşturuldu. Denge gözetilerek r = 16, dropout=0.05 olarak belirlendi. Hedef modüller modelin doğruluğu ve adaptasyon yeteneği göz önünde bulundurularak modelin tüm katmanlarına etkili olacak şekilde seçildi.
+- trainer.py oluşturuldu.
+- schemas.py üzerinden Training Profile, eğitim parametreleri belirlendi.
+- training.ipynb üzerinden "Smoke Test" gerçekleştirildi.
+- Gelişmeler commit edilip push'landı.
