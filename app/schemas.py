@@ -130,3 +130,25 @@ class LoRAProfile(BaseModel):
         default_factory=lambda:["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"] 
     )
     bias: str = "none"
+
+class EvalSampleResult(BaseModel):
+    question: str
+    ground_truth: str
+    base_response: str
+    finetuned_response: str
+    semantic_sim_base: float
+    semantic_sim_ft: float
+    token_f1_base: float
+    token_f1_ft: float 
+    sources: List[Dict[str, Any]] = Field(default_factory=list)
+
+class EvaluationSummary(BaseModel):
+    eval_model_id: str
+    total_samples: int
+    avg_semantic_sim_base: float
+    avg_semantic_sim_ft: float
+    avg_token_f1_base: float
+    avg_token_f1_ft: float
+    samples: List[EvalSampleResult]
+    evaluated_at: str
+

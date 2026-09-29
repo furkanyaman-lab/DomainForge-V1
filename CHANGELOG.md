@@ -87,3 +87,12 @@
 - schemas.py üzerinden Training Profile, eğitim parametreleri belirlendi.
 - training.ipynb üzerinden "Smoke Test" gerçekleştirildi.
 - Gelişmeler commit edilip push'landı.
+## Gün-10 29.09.2026
+### Faz-9
+- Daha doğru değerlendirme sonuçlarını elde etmek için EvalSampleResult ve EvaluationSummary pydantic şemaları oluşturuldu.
+- Şema düzeni üzerinden evaluator.py oluşturuldu
+- Evaluate aşamasında model kıyaslamasına gidilirken Fine-Tuing model base modele LoRA Adaptörü giydirilerek temsil edildi. Bu sayede deneysel bir alan oluşturularak nihaiz model için yeniden üretim karar mekanizması hızlandırıldı.
+- Fine-Tuning model ile Base Model çıktıları arasında kelime eşleşmesi ile değil kosinüs benzerliği üzerinden değerlendirme yapıldı. Bu sayede iki çıktının kelime kesişimi düşük olsa da referans cevaba olan anlamsal yakınlık dikkate alındı.
+- Evaluate aşaması sonucunda tüm soruların skor ortalaması hesaplanarak sürümlenebilir json dosyalarına kaydedilmesi sağlandı
+- evaluation.ipynb üzerinden "Smoke Test" gerçekleştirildi.
+- Gelişmeler commit edilip push'landı.
