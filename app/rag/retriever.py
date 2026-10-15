@@ -15,13 +15,14 @@ class Retriever:
         self.embedding_manager = embedding_manager or vector_store.embedding_manager
         self.top_k = top_k
 
-    def retrieve(self, query: str, top_k: Optional[int] = None) -> List[RetrievedContext]:
+    def retrieve(self, query: str, top_k: Optional[int] = None, where: Optional[dict] = None) -> List[RetrievedContext]:
         k =top_k or self.top_k
         query_embedding = self.embedding_manager.generate_embeddings([query], is_query=True)
 
         results = self.vector_store.collection.query(
             query_embeddings = query_embedding,
             n_results = k,
+            where=where,
             include = ["documents", "metadatas", "distances"],
         )
 
@@ -49,3 +50,12 @@ class Retriever:
             )
 
         return retrieved_contexts
+
+    def retrieve_by_documnet(
+            self,
+            query: str,
+            document_id: str,
+            top_k: Optional[int] = None
+    ) -> List[RetrievedContext]:
+
+        return self.retrieve(query=query, top_k=top_k, where={"document_id" : document_id})

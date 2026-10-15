@@ -45,3 +45,32 @@ def clean_documents(documents: list) -> list:
     for doc in documents:
         doc.text = clean_text(doc.text, doc.source)
     return documents
+
+
+def clean_generated_answer(text: str) -> str:
+
+    if not text:
+        return ""
+        
+    text = re.sub(r"\(References?\s*\[?\d+(?:,\s*\d+)*\]?\)", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\[References?\s*\[?\d+(?:,\s*\d+)*\]?\]", "", text, flags=re.IGNORECASE)
+    
+    text = re.sub(r"\([A-Za-z0-9\.\-_]+_p\d+_c\d+\)", "", text)
+    
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    return text.strip()
+
+def extract_json_payload(raw_text: str) -> str:
+
+    if not raw_text:
+        return ""
+
+    cleaned = re.sub(r"<think>.*?</think>", "", raw_text, flags=re.DOTALL).strip()
+    cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.MULTILINE)
+    cleaned = re.sub(r"\s*```$", "", cleaned, flags=re.MULTILINE).strip()
+
+    json_match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
+    if json_match:
+        return json_match.group(1)
+
+    return cleaned

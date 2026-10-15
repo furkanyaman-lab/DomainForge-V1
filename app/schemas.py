@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from enum import Enum
+from datetime import datetime, timezone
 
 class Document(BaseModel):
     document_id: str
@@ -58,7 +59,7 @@ class QuestionDepth(str, Enum):
     COMPARATIVE = "comparative"
 
 class GenerationProfile(BaseModel):
-    question_count: int = Field(default=2, ge=1, le=5, description="Number of questions to be generated from each context")
+    question_count: int = Field(default=2, ge=1, le=10, description="Number of questions to be generated from each context")
     answer_length: str = Field(default="detailed", description="Answer length: concise, moderate, detailed")
     depth: QuestionDepth = Field(default=QuestionDepth.COMPARATIVE, description="The level of technical depth of the question")
     temperature: float = Field(default=0.2, ge=0.0, le=1.0, description="LLM temperature value (low = more faithful)")
@@ -89,7 +90,7 @@ class ValidatedQA(BaseModel):
     answer: str
     sources: List[ContextSourceReference]
     depth: str
-    validated_at: str
+    validated_at: Optional[str] = Field(default_factory=lambda: datetime.now(timezone.utc). isoformat())
 
 class ChatMessage(BaseModel):
     role: str = Field(..., description="'system', 'user' or 'asisstant'")
@@ -114,12 +115,12 @@ class TrainingProfile(BaseModel):
     output_dir: str = "models/fine-tuned-governance"
     learning_rate: float = 2e-4
     num_train_epochs: int = 3
-    per_device_train_batch_size: int = 2
-    gradient_accumulation_steps: int = 4
+    per_device_train_batch_size: int = 1
+    gradient_accumulation_steps: int = 8
     max_seq_length: int = 1024
-    logging_steps: int = 5
-    save_strategy: str = "epoch"
-    warmup_ratio: float = 0.05
+    logging_steps: int = 2
+    save_strategy: str = "no"
+    warmup_steps: int = 5
     seed: int = 42
 
 class LoRAProfile(BaseModel):
@@ -152,3 +153,51 @@ class EvaluationSummary(BaseModel):
     samples: List[EvalSampleResult]
     evaluated_at: str
 
+class PipelineConfig(BaseModel):
+    raw_data_dir: str = "data/raw"
+    processed_dir: str = "data/processed"
+    final_dir: str = "data/final"
+    chroma_dir: str = "data/chroma_db"
+    models_dir: str = "models/fine-tuned-governance"
+
+    # RAG & Generation
+    chunk_size: int = 500
+    chunk_overlap: int = 100
+    top_k: int = 5
+    generation_question_count: int = 3
+    ollama_model: str = "deepseek-r1:14b"
+    similarity_threshold: float = 0.85
+    chunk_similarity_threshold: float = 0.85
+    chunk_max_chars: int = 1200
+
+    # Dataset Split
+    train_ratio: float = 0.8
+    seed: int = 42
+
+    # Fine-Tuning & Evaluation
+    base_model_id: str = "Qwen/Qwen2.5-3B-Instruct"
+    skip_training: bool = True # -> Default value for development/dry-run: True
+
+class PipelineManifest(BaseModel):
+    executed_at: str
+    stage: str
+    status: str
+    ingested_documents: str
+    total_chunks: int
+    validated_qa_count: int
+    train_samples: int
+    eval_samples: int
+    model_output_dir: str
+    evaluation_summary_file: str | None = None
+
+class GenerationDepth(str, Enum):
+    FOUNDATIONAL = "foundational"
+    TECHNICAL = "technical"
+    COMPARATIVE = "comparative"
+
+class ValidatedQAPair(BaseModel):
+
+    question: str = Field(description="The technical governance question raised")
+    answer: str = Field(description="A detailed and verified answer")
+    sources: List[Dict[str, Any]] = Field(default_factory= List, description="Provenance information regarding the document, page and chunk on which the response is based")
+    semantic_similarity: Optional[float] = Field( default=None, description="The semantic similarity or originality score calculated during the validation stage")

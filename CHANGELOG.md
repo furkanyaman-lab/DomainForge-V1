@@ -96,3 +96,35 @@
 - Evaluate aşaması sonucunda tüm soruların skor ortalaması hesaplanarak sürümlenebilir json dosyalarına kaydedilmesi sağlandı
 - evaluation.ipynb üzerinden "Smoke Test" gerçekleştirildi.
 - Gelişmeler commit edilip push'landı.
+### Faz-10
+## Gün-11 30.09.2026
+- schemas.py üzerinden PipelineConfig yapılandırma şeması oluşturuldu
+- `pipeline.py` oluşturuldu. Makefile dosyası akışa göre düzenlendi
+- pipeline.py üzerinden temel akış oluşturuldu:
+  - Ingestion → Processing akışı bağlandı
+  - Processing → RAG akışı bağlandı
+  - RAG → Q/A generation akışı bağlandı
+  - Q/A → Validation akışı bağlandı
+  - Validation → JSONL akışı bağlandı
+## Gün-12 02.10.2026
+- Fine tuning aşaması öncesinde testler yapıldı. Test sonrası mimariye sadık kalınarak temel akış üzerinde aşağıdaki değişiklikler yapıldı:
+  - İlk test çalışması sonrasında üretilen q/a çiftlerinde yüzeysellik ve halüsinasyon belirlendiği için bunu engellemek adına summarizer.py üzerinden ham pdflerden konu başlıkları/içerik haritası çıkarılması sağlandı.
+## Gün-13 03.10.2026
+  - Oluşturulan içerik haritası interim/framework_summaries.json üzerine kaydedildi. Bu içerik üzerinden üretime tekrar başlandı
+  - Üretilen verilerde belgeye dair dağılımın dengeli olmaması sebebiyle qa_generator.py üzerinden generate_balanced_dataset fonksiyonu oluşturuldu.
+## Gün-14 04.10.2026
+  - Üretim yenilendi, deneme üzerine yeniden çalıştırma durumu düşünülerek üretimin konu dağılımı ve soru sayısına göre kaldığı yerden devam etmesi için gerekli değişiklikler yapıldı.
+## Gün-15 13.10.2026
+  - Q/A Validation işleminin daha sağlıklı ilerlemesi için kayıt öncesi negatif promptlar/guardrails oluşturuldu,
+  - Local model deepseek R1 kullanılarak nihai testlere geçildi.
+## Gün-16 14.10.2026
+  - Üretilen veri derinliği, kalite ve hız göz önünde bulundurarak nvidia/nemotron-3-ultra-550b-a55b:free modeline geçildi. karşılaştırma için karma veriseti yedeklendi
+  - Api üzerinden nihai üretim aşamasına geçildi
+## Gün-17 15.10.2026
+- Üretilen veri seti LLM'ler yardımıyla değerlendirildi
+- Değerlendirme sonrası guardrails'tan geçen kayıtlar için terminal üzerinden tekrar temizleme işlemi yapıldı
+- Kalan 160 kayıt üzerinden fine tuning/train işlemi gerçekleştirildi
+- Oluşan adaptor üzerinden base model kıyaslanarak evaluation/değerlendirme yapıldı
+
+
+

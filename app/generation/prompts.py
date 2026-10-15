@@ -1,14 +1,13 @@
 import json
-from typing import List
-from app.schemas import RetrievedContext, GenerationProfile
+from typing import List, Dict, Any
+from app.schemas import RetrievedContext
 
 
 SYSTEM_GOVERNANCE_EXPERT = """You are a specialized AI Governance, Ethics, and Risk Management technical expert.
-Your responses must be strictly grounded in the provided contextual references (such as NIST AI RMF, UNESCO Recommendations, and OECD AI Principles).
+Your responses must be strictly grounded in the provided contextual references.
 Do not fabricate information, extrapolate without evidence, or use outside unverified facts."""
 
 def format_retrieved_context(contexts: List[RetrievedContext]) -> str:
-
     blocks = []
     for ctx in contexts:
         block = (
@@ -17,13 +16,12 @@ def format_retrieved_context(contexts: List[RetrievedContext]) -> str:
             f"Page: {ctx.page}\n"
             f"Chunk ID: {ctx.chunk_id}\n"
             f"Content: {ctx.text}\n"
-            f"[CONTEXT BLOCK END]" 
+            f"[CONTEXT BLOCK END]"
         )
         blocks.append(block)
     return "\n\n".join(blocks)
 
 def build_rag_qa_prompt(query: str, contexts: List[RetrievedContext]) -> str:
-
     context_str = format_retrieved_context(contexts)
     return f"""{SYSTEM_GOVERNANCE_EXPERT}
 
@@ -36,92 +34,90 @@ def build_rag_qa_prompt(query: str, contexts: List[RetrievedContext]) -> str:
 ### Grounded Answer:"""
 
 
-SYSTEM_SYNTHETIC_GENERATOR = """You are a Principal AI Governance Architect and Lead Evaluator.
-Your mission is to generate high-fidelity, technically rigorous synthetic Question/Answer pairs to create evaluation benchmarks and fine-tuning datasets for Trustworthy AI.
-
-Strict Guidelines:
-1. Strict Grounding: Every answer must be 100% derived from the provided context. Never use external knowledge.
-2. Depth Awareness: Match the requested technical depth (Foundational, Technical, Comparative).
-3. Precision: The answer must cite specific principles, mechanisms, or requirements mentioned in the text.
-4. Output Format: You MUST respond ONLY with a raw valid JSON object. No conversational intro, no markdown codeblocks, just JSON."""
-
-def buil_synthetic_qa_prompt(
-        context: RetrievedContext,
-        profile: GenerationProfile,
-) -> str:
-
-    schema_format = {
-        "pairs" : [
-            {
-                "question" : "Technically challenging question based strictly on the text",
-                "answer" : f"Clear, {profile.answer_length} answer fully verified by the text",
-            }
-        ]
-    }
-
-    return f"""{SYSTEM_SYNTHETIC_GENERATOR}
-
-### Context Reference:
-- Document: {context.source} (Page {context.page})
-- Chunk ID: {context.chunk_id}
-- Content:
-{context.text}
-
-### Instructions:
-- Target Depth: {profile.depth.value.upper()}
-- Question Count: {profile.question_count}
-- Target Answer Length: {profile.answer_length}
-
-Output must match this exact JSON structure:
-{json.dumps(schema_format, indent=2)}
-
-JSON Output:"""
-
-SYSTEM_CROSS_SYNTHESIZER = """You are a Principal AI Governance Architect and Lead Benchmark Evaluator.
-Your task is to synthesize MULTIPLE reference contexts to generate deep, multi-perspective Question/Answer pairs.
-
-Strict Rules:
-1. Cross-Context Synthesis: Connect, compare, or harmonize mechanisms across AT LEAST TWO different references provided.
-2. Grounding & Zero Extrapolation: Base both the question and answer STRICTLY on the provided text. Do not mention or extrapolate external frameworks, laws, or acts (e.g., EU AI Act, GDPR) unless they are explicitly referenced inside the verified context blocks.
-3. Natural Phrasing: Refer to frameworks by their formal names (e.g., 'NIST AI 100-1' or 'NIST AI RMF') instead of raw filenames. NEVER include terms like 'chunk_id', 'Ref ID', 'page number', or file extensions in the question or answer text.
-4. Output Format: Respond ONLY with a valid raw JSON object matching the requested schema."""
-
-def build_synthesized_qa_prompt(
-        contexts: List[RetrievedContext],
-        profile: GenerationProfile,
-) -> str:
+def build_question_catalog_prompt(framework_summaries: Dict[str, Any], target_count: int) -> str:
+    doc_keys = list(framework_summaries.keys())
     
-    blocks = []
+    return f"""You are a Principal Regulatory and AI Governance Architect.
+Analyze the structural summaries and core pillars of the following {len(doc_keys)} governance framework(s):
 
-    for i, c in enumerate(contexts, 1):
-        doc_name = c.source.replace(".pdf", "")
-        blocks.append(
-            f"[REF {i}] Framework: {doc_name} (Page {c.page}) | Ref ID: {c.chunk_id}\n{c.text}"
-        )
+{json.dumps(framework_summaries, indent=2)}
+
+AVAILABLE FRAMEWORKS:
+{', '.join(doc_keys)}
+
+TASK:
+Generate EXACTLY {target_count} rigorous, specific, and technically demanding governance questions.
+
+STRICT BALANCING & COVERAGE RULES:
+1. BALANCED COVERAGE: Distribute questions EQUALLY across all available frameworks ({', '.join(doc_keys)}):
+   - Produce focused questions targeting unique technical controls, ethical principles, or compliance responsibilities of each individual framework.
+   - Produce comparative / cross-framework questions that explore alignments, trade-offs, or regulatory gaps between the frameworks.
+2. TECHNICAL DEPTH: Focus on concrete governance mechanisms, auditing requirements, operational testing, data provenance, bias mitigation, and human oversight.
+3. NO SHALLOW QUESTIONS: Do NOT create generic questions (e.g., 'What are the main goals of framework X?').
+4. FORMAT: Return ONLY valid JSON in this exact structure:
+{{
+  "catalog": [
+    "Rigorous, technically precise governance question here...",
+    ...
+  ]
+}}
+"""
+
+def build_targeted_synthesis_prompt(question: str, contexts: List[RetrievedContext]) -> str:
+    context_str = "\n\n".join([
+        f"--- CONTEXT BLOCK {i+1} (Document: {c.document_id}, Page: {c.page}) ---\n{c.text}"
+        for i, c in enumerate(contexts)
+    ])
     
-    combined_contexts = "\n\n".join(blocks)
+    return f"""You are an authoritative AI Governance and Compliance Advisor.
+Synthesize a comprehensive, authoritative, and technically grounded answer to the specific question below using ONLY the provided references.
 
-    schema_format = {
-            "pairs" : [
-                {
-                "question": "Deep technical question synthesizing governance mechanisms across references",
-                "answer": "Comprehensive answer connecting the principles and controls without citing chunk IDs",
-                "used_reference_numbers": [1, 2]
-                }
-            ]
-        }
+QUESTION:
+{question}
 
-    return f"""{SYSTEM_CROSS_SYNTHESIZER}
+CONTEXT REFERENCES:
+{context_str}
 
-### Verified References:  
-{combined_contexts}
+STRICT WRITING RULES:
+1. Ground every claim directly in the provided context references.
+2. CITATION CLEANLINESS: DO NOT include in-text bracketed markers such as '(Reference [1])', '[Reference 2]', or chunk identifiers in the body of your answer. Write in natural, executive-level regulatory prose.
+3. If comparing frameworks, explain differences and complementary aspects with technical precision.
+4. Return ONLY valid JSON:
+{{
+  "answer": "Polished, exhaustive technical answer without raw reference tags...",
+  "used_references_numbers": [1, 2]
+}}
+"""
 
-### Directives:
-- Target Depth: {profile.depth.value.upper()}
-- Target Question Count: {profile.question_count}
-- Answer Style: {profile.answer_length}
+def build_balanced_gap_catalog_prompt(
+    framework_summaries: Dict[str, Any],
+    coverage_summary: Dict[str, int],
+    target_count: int,
+) -> str:
+    doc_keys = list(framework_summaries.keys())
 
-Output must match this exact Json structure:
-{json.dumps(schema_format, indent=2)}
+    return f"""You are a Principal AI Governance Architect.
+Review the structural blueprints of the following frameworks:
+{json.dumps(framework_summaries, indent=2)}
 
-JSON Output:"""
+CURRENT DATASET COVERAGE (Completed counts per framework):
+{json.dumps(coverage_summary, indent=2)}
+
+AVAILABLE FRAMEWORKS:
+{', '.join(doc_keys)}
+
+TASK:
+Generate EXACTLY {target_count} technical governance questions to BALANCE the overall dataset.
+
+CRITICAL INSTRUCTIONS:
+1. GAP FILLING: Strongly prioritize frameworks and topics that have the lowest counts or are missing in CURRENT DATASET COVERAGE.
+2. TECHNICAL DEPTH: Focus on concrete technical controls, auditing, operational risk mitigations, human-in-the-loop oversight, and compliance nuances.
+3. NO SHALLOW QUESTIONS: Avoid generic questions (e.g., 'What are the principles of X?').
+4. FORMAT: Return ONLY valid JSON in this exact structure:
+{{
+  "catalog": [
+    "Targeted question addressing an under-represented governance area...",
+    ...
+  ]
+}}
+"""

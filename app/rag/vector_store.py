@@ -1,5 +1,6 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
+from collections import Counter
 import chromadb
 from chromadb.config import Settings
 
@@ -69,3 +70,11 @@ class VectorStore:
 
     def count(self) -> int:
         return self.collection.count()    
+
+    def get_document_distribution(self) -> Dict[str, int]:
+        all_metadata = self.collection.get(include=["metadatas"])["metadatas"]
+        if not all_metadata:
+            return {}
+
+        counts = Counter([ m ["document_id"] for m in all_metadata if "document_id" in m])
+        return dict(counts)

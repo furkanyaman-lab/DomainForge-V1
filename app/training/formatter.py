@@ -1,6 +1,7 @@
 import json
 import random
 from pathlib import Path
+from collections import defaultdict
 from typing import List, Tuple
 from app.schemas import ValidatedQA, TrainingExample, ChatMessage, DatasetSplitSummary
 
@@ -31,6 +32,14 @@ class DatasetFormatter:
 
         return TrainingExample(messages=messages, metadata=metadata)
 
+
+    def _get_primary_source(self, example: TrainingExample) -> str:
+        sources = example.metadata.get("sources", [])
+        if sources and isinstance(sources, list) and len(sources) > 0:
+            first_src = sources[0]
+            if isinstance(first_src, dict) and "source" in first_src:
+                return first_src["source"]
+            return "UNKNOWN"
     def split_dataset(
             self,
             examples: List[TrainingExample],
@@ -41,24 +50,38 @@ class DatasetFormatter:
             if not examples or len(examples) == 0:
                 raise ValueError("The dataset to be split is empty! There are no records in the 'examples' list.")
 
-            shuffled = list(examples)
+            if len(examples) == 1:
+                return examples, []
+
             random.seed(seed)
-            random.shuffle(shuffled)
 
-            if len(shuffled) == 1:
-                train_data = shuffled
-                eval_data = []
+            grouped_by_source = defaultdict(list)
+            for ex in examples:
+                src_key = self._get_primary_source(ex)
+                grouped_by_source[src_key].append(ex)
 
-            else:
+            train_data: List[TrainingExample] = []
+            eval_data: List[TrainingExample] = []
 
-                split_idx = int(len(shuffled) * train_ratio)
-                if split_idx == 0:
-                    split_idx = 1
-                elif split_idx == len(shuffled):
-                    split_idx = len(shuffled) - 1
+            eval_ratio = 1 - train_ratio
 
-                train_data = shuffled[:split_idx]
-                eval_data = shuffled[split_idx:]
+            for src_name, group_items in grouped_by_source.items():
+                items = list(group_items)
+                random.shuffle(items)
+
+                group_len = len(items)
+                if group_len == 1:
+                    train_data.append(items[0])
+                    continue
+
+                n_eval = int(round(group_len * eval_ratio))
+                n_eval = max(1, min(n_eval, group_len - 1))
+
+                eval_data.extend(items[:n_eval])
+                train_data.extend(items[n_eval:])
+
+            random.shuffle(train_data)
+            random.shuffle(eval_data)
 
             if not train_data:
                 raise ValueError("The partitioning operation failed: the 'train_data' list was empty.")

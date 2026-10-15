@@ -74,12 +74,14 @@ class DomainTrainer:
             gradient_accumulation_steps=self.train_profile.gradient_accumulation_steps,
             logging_steps=self.train_profile.logging_steps,
             save_strategy=self.train_profile.save_strategy,
-            warmup_ratio=self.train_profile.warmup_ratio,
+            warmup_steps=self.train_profile.warmup_steps,
             seed=self.train_profile.seed,
             fp16=False,
-            bf16=is_mps,
+            gradient_checkpointing=True,
+            optim="adamw_torch",
+            bf16=True,
             report_to="none",
-            use_mps_device=is_mps,
+            use_cpu=False
         )
 
         trainer = Trainer(
@@ -87,7 +89,7 @@ class DomainTrainer:
             args=training_args,
             train_dataset=tokenized_data["train"],
             eval_dataset=tokenized_data.get("eval"),
-            tokenizer=tokenizer,
+            processing_class=tokenizer,
             data_collator=DataCollatorForSeq2Seq(
                 tokenizer, pad_to_multiple_of=8, return_tensors="pt"
             ),
