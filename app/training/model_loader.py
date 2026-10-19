@@ -8,6 +8,7 @@ from transformers import (
 )
 
 class ModelLoader:
+    """This class loads the base model to be fine-tuned in the project."""
     def __init__(self, model_id: str = "Qwen/Qwen2.5-3B-Instruct"):
         self.model_id = model_id
         self.device = self._get_optimal_device()

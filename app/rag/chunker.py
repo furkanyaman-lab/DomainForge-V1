@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from app.schemas   import Document, Chunk
 
 class SemantikChunker:
+    """This class incorporates the Semantic Chunk architecture, which is suitable for generating Q&A pairs."""
     def __init__(
         self,
         model_name: str = "all-MiniLM-L6-v2",

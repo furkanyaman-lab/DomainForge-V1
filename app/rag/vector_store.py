@@ -8,9 +8,10 @@ from app.schemas import Chunk
 from app.rag.embedding import EmbeddingManager
 
 class VectorStore:
+    """This class contains the vectorization architecture for RAG following the chunking process."""
     def __init__(
         self,
-        persist_dir: Union[str, Path] = "data/vectorstore",
+        persist_dir: Union[str, Path] = "data/chroma_db",
         collection_name: str = "domainforge_governance",
         embedding_manager: Optional[EmbeddingManager] = None,
 

@@ -9,6 +9,11 @@ from app.training.model_loader import ModelLoader
 from app.training.lora_config import LoRAConfigFactory
 
 class DomainTrainer:
+    """
+    Manages the fine-tuning and training pipeline for the base model.
+    
+    Handles training configurations, optimization steps and model weights updates during the learning process.
+    """
     def __init__(
             self,
             train_profile: TrainingProfile | None = None,

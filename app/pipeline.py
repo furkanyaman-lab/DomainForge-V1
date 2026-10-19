@@ -145,15 +145,15 @@ class DomainForgePipeline:
             else self.train_file
         )
 
-        # adapter = (
-        #     self.models_dir
-        #     if (self.models_dir.exists() and not self.config.skip_training)
-        #     else None
-        # )
+        adapter = (
+            self.models_dir
+            if (self.models_dir.exists() and not self.config.skip_training)
+            else None
+        )
 
         evaluator = ModelEvaluator(
             base_model_id=self.config.base_model_id,
-            adapter_path=Path("models/fine-tuned-governance"),
+            adapter_path=Path(adapter),
             embedding_manager=self.embedding_manager,
         )
         summary = evaluator.evaluate(

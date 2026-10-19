@@ -12,7 +12,7 @@ SYSTEM_INSTRUCTION = (
 )
 
 class DatasetFormatter:
-
+    """This class prepares the data for training. It involves splitting the data into training and evaluation sets in a balanced manner at the beginning of the process and exports the processed outputs to JSONL format"""
     def __init__(self, system_prompt: str = SYSTEM_INSTRUCTION):
         self.system_prompt = system_prompt
 

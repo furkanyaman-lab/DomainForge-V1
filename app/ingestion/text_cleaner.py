@@ -9,7 +9,8 @@ def clean_text(text: str, filename: str) -> str:
     text = re.sub(r"\n{3,}", "\n\n", text)
 
     match filename:
-
+    # Document-based cleaning
+    
         case "Recommendation on the Ethics of Artificial Intelligence.pdf":
             text = re.sub(r"SHS/BIO/REC-AI/2021/1|Recommendation on the Ethics of Artificial Intelligence", "", text, flags=re.IGNORECASE)
             text = re.sub(r"^\s*\d+\s*$", "", text, flags=re.MULTILINE)

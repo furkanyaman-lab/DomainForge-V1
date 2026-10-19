@@ -3,6 +3,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 
 class EmbeddingManager:
+    """This class contains the embedding architecture."""
     def __init__(self, model_name: str = "BAAI/bge-base-en-v1.5"):
         self.model_name = model_name
         self.model = SentenceTransformer(model_name)

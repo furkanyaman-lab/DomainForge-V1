@@ -8,6 +8,7 @@ from app.schemas import SynthesizedQA, ValidatedQA
 from app.rag.embedding import EmbeddingManager
 
 class QAValidator:
+    """This class validates the generated Q&A pairs for similarity, superficiality and hallucinations."""
     def __init__(
         self,
         embedding_manager: EmbeddingManager,

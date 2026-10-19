@@ -5,6 +5,7 @@ import pymupdf
 import ollama
 
 class FrameworkSummarizer:
+    """This class creates a content map from the documentations to improve technical compatibility and ensure that the questions and answers align with the documentation."""
     def __init__(
         self,
         model_name: str = "deepseek-r1:14b",

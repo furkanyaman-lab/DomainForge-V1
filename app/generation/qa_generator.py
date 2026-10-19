@@ -18,6 +18,12 @@ from app.generation.prompts import (
 )
 
 class QAGenerator:
+    """
+    Generates Q&A pairs from input documents for model training.
+
+    Generates a specified number of question-answer pairs using a balanced, topic-based generation architecture to ensure dataset diversity.
+    """
+
     def __init__(self, model_name: str = "deepseek-r1:14b", api_key: Optional[str] = None, raw_dir: Optional[Path] = None):
         self.model_name = model_name
         self.client = ollama.Client()

@@ -5,6 +5,7 @@ from app.rag.embedding import EmbeddingManager
 from app.rag.vector_store import VectorStore
 
 class Retriever:
+    """This class implements the RAG architecture"""
     def __init__(
             self,
             vector_store: VectorStore,

@@ -176,7 +176,7 @@ class PipelineConfig(BaseModel):
 
     # Fine-Tuning & Evaluation
     base_model_id: str = "Qwen/Qwen2.5-3B-Instruct"
-    skip_training: bool = True # -> Default value for development/dry-run: True
+    skip_training: bool = False # -> For development/dry-run: True
 
 class PipelineManifest(BaseModel):
     executed_at: str

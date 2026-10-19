@@ -12,7 +12,7 @@ from app.rag.embedding import EmbeddingManager
 from app.training.model_loader import ModelLoader
 
 class ModelEvaluator:
-
+    """This class generates an evaluation report by comparing the responses of the fine-tuned model with those of the base model."""
     def __init__(
             self,
             base_model_id: str = "Qwen/Qwen2.5-3B-Instruct",

@@ -3,6 +3,7 @@ from sentence_transformers import CrossEncoder
 from app.schemas import RetrievedContext
 
 class Reranker:
+    """This class contains the reranker architecture required by the RAG pipeline. It returns the top_n / 5 highest-scoring responses."""
     def __init__(self, model_name: str = "BAAI/bge-reranker-base"):
         self.model = CrossEncoder(model_name)
 
