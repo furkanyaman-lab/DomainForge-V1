@@ -27,13 +27,6 @@ def clean_text(text: str, filename: str) -> str:
             text = re.sub(r"^\s*\d+\s+(?:Some|What|The|These|One|See)\s+.*$", "", text, flags=re.MULTILINE | re.IGNORECASE)
             text = re.sub(r"^\s*\d+\s*$", "", text, flags=re.MULTILINE)
             text = re.sub(r"•\s*\n\s*", "• ", text)
-
-        case "OECD AI Principles - Raw - Clairk.pdf":
-            text = re.sub(r"OECD Principles on Artificial Intelligence|OECD AI Principles", "", text, flags=re.IGNORECASE)
-            text = re.sub(r"[\U000f0000-\U000fFFFF]", "", text)
-            text = re.sub(r"Explore|Plain\s+Text", "", text, flags=re.IGNORECASE)
-            text = re.sub(r"\d+\s+May\s+\d{4}\s+version|\bAs\s+amended\s+on\s+\d+\s+May\s+\d{4}", "", text, flags=re.IGNORECASE)
-            text = re.sub(r"‒\s*", "• ", text)
             
         case _:
             print(f"No specific rule was found for '{filename}', general cleaning applied. ")

@@ -125,6 +125,11 @@
 - Değerlendirme sonrası guardrails'tan geçen kayıtlar için terminal üzerinden tekrar temizleme işlemi yapıldı
 - Kalan 160 kayıt üzerinden fine tuning/train işlemi gerçekleştirildi
 - Oluşan adaptor üzerinden base model kıyaslanarak evaluation/değerlendirme yapıldı
-
-
-
+### Faz-11/12
+## Gün-18 17.10.2026
+- Gerekli testler yapıldı
+- README.md oluşturuldu
+  - Proje amacı, mimari ve akış dökümante edildi
+  - Örnek çıktı üzerinden değerlendirme yapıldı
+  - Proje sınırlılıkları ve gelecek iyileştirilmelerden bahsedildi
+- DESICION.md oluşturuldu

@@ -1,0 +1,26 @@
+Projede ilgili aşamada alınan mimari kararlara aşağıda yer verilmiştir:
+- Ingestion:
+    - Projede hız, çoklu format desteği, gelişmiş düzen algılama ve RAG ile uyum teknolojileri sebebiyle "fitz - PyMuPDF" kütüphanesi tercih edilmiştir.
+    - Metin temizleme işlemi regex yardımıyla gerçekleştirilmiş olup statik/sabit komutların yanında her dökümanın kendi içeriğinden yola çıkılarak hazırlanmış komutlarla temizleme ve düzenleme işlemi tercih edilmiştir.
+- Chunk § Embedding:
+    - Projenin doğası gereği soru cevap çiftleri içerisinde anlamsal bütünlükten yola çıkıldığından Semantik Chunk teknolojisi tercih edilmiştir.
+    - Embedding işlemi esnasında benzer işlevli modellere kıyasla daha yüksek performansı sebebiyle BAAI/bge-base-en-v1.5 modeli tercih edilmiştir.
+- Retrieve:
+    - Geri çağırma işlemi esnasında daha yüksek doğruluk elde etmek amacıyla "reranker", (5 veri içerisinde) yeniden sıralama işlemi kullanılması tercih edilmiştir.
+- Generation:
+    - Üretilen soru cevap çiftlerinin dökümana sadık kalması, yüzeysellikten uzak konu derinliğine hakim olması ve kapsayıcı olması amaçları güdülerek summarizer.py üzerinden dökümanın içindekiler kısmından yola çıkalarak konu haritası çıkarılması, Q/A çiftlerinin çıkarılan konu haritası üzerinden oluşturulması tercih edilmiştir.
+    - Üretim işleminin dökümanlar üzerinden dengeli yürütülmesi amaçlanarak uygun mimari tercih edilmiştir.
+    - Üretim promptunun farklı dökümanlara uyum sağlaması amaçlanarak soyut ve konu bağımsız oluşturulması tercih edilmiştir.
+    - Q/A Validation işlemi sırasında yüksek standarda ulaşmak ve eğitilecek modelin performansını artırmak maksadıyla %85 benzerlik eşiği oluşturularak aynı/benzer üretimlerin önüne geçilmiş ve yasaklı kelime ve kavramlar oluşturularak yüzeyselliğin ve halüsinasyon senaryoları engellenmeye çalışılmıştır.
+- Training:
+    - Cihaz performansı ve model büyüklüğü dikkate alınarak qlora yerine Peft/LoRA tercih edilmiştir.
+    - Base model olarak kendi segmentindeki performansı göz önünde bulundurularak "Qwen/Qwen2.5-3B-Instruct" tercih edilmiştir.
+    - Eğitim Apple Mac Studio m1 Max cihaz üzerinde gerçekleştirildiğinden cuda yerine mps kullanımı tercih edilmiştir.
+    - Efektif Batch Size: 2 x 4 yerine 1 x 8 = 8 olarak kurgulanmıştır. Bunun nedeni ise MPS mimarisinin anlık büyük tensör tahsisinde (yani batch_size = 2 olduğunda) bellek taşması yaşandığından batch_size = 1, step 8 olarak belirlenmiştir.
+    - LoRA katmanları sıfırdan başlatıldığı için taban modelin tam ağırlık güncellemesine x/e^5 oranlarına kıyasla daha yüksek bir öğrenme oranına ihtiyaç duyduğundan learning_rate: 2e-4 olarak belirlenmiştir.
+    - Küçük hacimli (128 örnek) ancak bilgi yoğunluğu yüksek veri setlerinde 1-2 epoch adaptörün terminolojiyi içselleştirmesine yetmez; 4 epoch ve üzeri ise ezberlemeye (overfitting / memorization) neden olur. 3 epoch, loss değerinin 3.28'den 1.93 platosuna sağlıklı inişini sağlamıştır.
+    - Her checkpoint diske ve birleşik belleğe yüksek I/O yükü getirdiğinden, donanımı yormamak adına sadece eğitim sonu nihai adaptör kaydedilmiş, ara checkpoint kapatılmıştır.
+    - Dökümanlarda yer alan NIST kontrolleri, Rego kapıları, ve metrik eşikleri gibi teknik ve kural bazlı kavramlar sebebiyle alan adaptasyonu daha geniş bir alt uzay gerektirdiğinden r=8, yerine 16 olarak seçilmiştir. Bu minvalde agresif öğrenme ölçekleme katsayısı 2'ye ulaşmak için lora_alpha: 32 olarak belirlenmiştir.
+    - Modelin alana tam uyum sağlaması istenildiği için All-Linear LoRA yani tüm katmanlarda eğitimin etkili olması tercih edilmiştir.
+- Evaluation:
+    - Değerlendirme verilerinin, başarı ölçütü en iyi modeli oluşturmaktan ziyade base modele kıyasla süreci daha verimli hale getirmek olduğundan kıyaslama metrikleri olarak ground_truth yani döküman verilerinini yanı sıra base model cevaplarını da kapsaması tercih edilmiştir.
