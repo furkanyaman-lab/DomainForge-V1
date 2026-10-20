@@ -27,6 +27,7 @@ from app.generation.qa_validator import QAValidator
 from app.training.formatter import DatasetFormatter
 from app.training.trainer import DomainTrainer
 from app.evaluation.evaluator import ModelEvaluator
+from app.evaluation.faithfulness_judge import FaithfulnessJudge
 
 class DomainForgePipeline:
     def __init__(self, config: PipelineConfig | None = None):
@@ -145,16 +146,19 @@ class DomainForgePipeline:
             else self.train_file
         )
 
-        adapter = (
-            self.models_dir
-            if (self.models_dir.exists() and not self.config.skip_training)
-            else None
-        )
+        judge = FaithfulnessJudge()
+
+        # adapter = (
+        #     self.models_dir
+        #     if (self.models_dir.exists() and not self.config.skip_training)
+        #     else None
+        # )
 
         evaluator = ModelEvaluator(
             base_model_id=self.config.base_model_id,
-            adapter_path=Path(adapter),
+            adapter_path=Path("models/fine-tuned-governance"),
             embedding_manager=self.embedding_manager,
+            judge=judge,
         )
         summary = evaluator.evaluate(
             eval_path=eval_target,

@@ -139,8 +139,15 @@ class EvalSampleResult(BaseModel):
     finetuned_response: str
     semantic_sim_base: float
     semantic_sim_ft: float
+    faithfulness_base: float = 0.0
+    faithfulness_ft: float = 0.0
+    hallucinations_base: List[str] = Field(default_factory=list)
+    hallucinations_ft: List[str] = Field(default_factory=list)
+    standards_valid_base: bool = True
+    standards_valid_ft: bool = True
     token_f1_base: float
-    token_f1_ft: float 
+    token_f1_ft: float
+    depth: str
     sources: List[Dict[str, Any]] = Field(default_factory=list)
 
 class EvaluationSummary(BaseModel):
@@ -148,6 +155,8 @@ class EvaluationSummary(BaseModel):
     total_samples: int
     avg_semantic_sim_base: float
     avg_semantic_sim_ft: float
+    avg_faithfulness_base: float = 0.0
+    avg_faithfulness_ft: float = 0.0
     avg_token_f1_base: float
     avg_token_f1_ft: float
     samples: List[EvalSampleResult]
@@ -201,3 +210,9 @@ class ValidatedQAPair(BaseModel):
     answer: str = Field(description="A detailed and verified answer")
     sources: List[Dict[str, Any]] = Field(default_factory= List, description="Provenance information regarding the document, page and chunk on which the response is based")
     semantic_similarity: Optional[float] = Field( default=None, description="The semantic similarity or originality score calculated during the validation stage")
+
+class FaithfulnessVerdict(BaseModel):
+    score: float = Field(..., description="Accuracy/faithfulness score between 0.0 and 1.0")
+    hallucinated_claims: List[str] = Field(default_factory=list, description="Fabricated claims not found in the source")
+    cited_standards_valid: bool = Field(..., description="Are the specified NIST/UNESCO items genuine?")
+    reasoning: str = Field(..., description="The adjudicator’s rationale for the technical assessment")

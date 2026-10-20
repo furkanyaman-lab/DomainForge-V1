@@ -3,12 +3,11 @@
 
 ## Phase 0 — Project Setup
 
-* [ ] Proje klasör yapısını oluştur
-* [ ] `requirements.txt` oluştur
-* [ ] `.gitignore` oluştur
-* [ ] `config.py` oluştur
-* [ ] Temel pipeline akışını tanımla
-* [ ] Logging yapısını oluştur
+* [x] Proje klasör yapısını oluştur
+* [x] `requirements.txt` oluştur
+* [x] `.gitignore` oluştur
+* [x] `config.py` oluştur
+* [x] Temel pipeline akışını tanımla
 
 ---
 
@@ -16,29 +15,29 @@
 
 ### PDF Loading
 
-* [ ] `pdf_loader.py` oluştur
-* [ ] PDF dosyalarını yükle
-* [ ] Sayfa bazlı metin çıkar
-* [ ] Document metadata oluştur
+* [x] `pdf_loader.py` oluştur
+* [x] PDF dosyalarını yükle
+* [x] Sayfa bazlı metin çıkar
+* [x] Document metadata oluştur
 
 ### Text Cleaning
 
-* [ ] `text_cleaner.py` oluştur
-* [ ] Gereksiz boşlukları temizle
-* [ ] Satır/paragraf düzenini normalize et
-* [ ] Temizlenmiş metni kaydet
+* [x] `text_cleaner.py` oluştur
+* [x] Gereksiz boşlukları temizle
+* [x] Satır/paragraf düzenini normalize et
+* [x] Temizlenmiş metni kaydet
 
 ---
 
 ## Phase 2 — Chunking
 
-* [ ] `chunker.py` oluştur
-* [ ] Chunking stratejisini belirle
-* [ ] Chunk boyutunu ve overlap değerini yapılandır
-* [ ] Chunk ID oluştur
-* [ ] Document ID ve page metadata'sını koru
-* [ ] Chunk kalitesini kontrol et
-* [ ] Processed veriyi kaydet
+* [x] `chunker.py` oluştur
+* [x] Chunking stratejisini belirle
+* [x] Chunk boyutunu ve overlap değerini yapılandır
+* [x] Chunk ID oluştur
+* [x] Document ID ve page metadata'sını koru
+* [x] Chunk kalitesini kontrol et
+* [x] Processed veriyi kaydet
 
 ---
 
@@ -46,16 +45,16 @@
 
 ### Embeddings
 
-* [ ] `embeddings.py` oluştur
-* [ ] Embedding modelini yapılandır
-* [ ] Chunk embedding'lerini üret
+* [x] `embeddings.py` oluştur
+* [x] Embedding modelini yapılandır
+* [x] Chunk embedding'lerini üret
 
 ### Vector Store
 
-* [ ] `vector_store.py` oluştur
-* [ ] Vector database'i yapılandır
-* [ ] Chunk + embedding + metadata kayıtlarını oluştur
-* [ ] Indexleme işlemini oluştur
+* [x] `vector_store.py` oluştur
+* [x] Vector database'i yapılandır
+* [x] Chunk + embedding + metadata kayıtlarını oluştur
+* [x] Indexleme işlemini oluştur
 
 ---
 
@@ -63,18 +62,18 @@
 
 ### Retrieval
 
-* [ ] `retriever.py` oluştur
-* [ ] Top-k retrieval yapılandır
-* [ ] Similarity score değerlerini döndür
-* [ ] Source metadata'sını koru
-* [ ] Retrieval sonuçlarını test et
+* [x] `retriever.py` oluştur
+* [x] Top-k retrieval yapılandır
+* [x] Similarity score değerlerini döndür
+* [x] Source metadata'sını koru
+* [x] Retrieval sonuçlarını test et
 
 ### RAG
 
-* [ ] Retrieved context yapısını oluştur
-* [ ] RAG prompt yapısını oluştur
-* [ ] Context → LLM akışını oluştur
-* [ ] Kaynak provenance zincirini koru
+* [x] Retrieved context yapısını oluştur
+* [x] RAG prompt yapısını oluştur
+* [x] Context → LLM akışını oluştur
+* [x] Kaynak provenance zincirini koru
 
 ---
 
@@ -82,49 +81,49 @@
 
 ### Generation Profile
 
-* [ ] Generation Profile yapısını oluştur
-* [ ] Question count parametresi
-* [ ] Answer length parametresi
-* [ ] Depth parametresi
-* [ ] Temperature parametresi
+* [x] Generation Profile yapısını oluştur
+* [x] Question count parametresi
+* [x] Answer length parametresi
+* [x] Depth parametresi
+* [x] Temperature parametresi
 
 ### Prompt
 
-* [ ] `prompts.py` oluştur
-* [ ] Q/A generation promptunu oluştur
-* [ ] Kaynak-temelli cevap üretimini tanımla
+* [x] `prompts.py` oluştur
+* [x] Q/A generation promptunu oluştur
+* [x] Kaynak-temelli cevap üretimini tanımla
 
 ### Q/A Generator
 
-* [ ] `qa_generator.py` oluştur
-* [ ] Retrieved context kullan
-* [ ] Structured output üret
-* [ ] Generated Q/A metadata'sını oluştur
-* [ ] Source, page ve chunk ID bilgisini koru
+* [x] `qa_generator.py` oluştur
+* [x] Retrieved context kullan
+* [x] Structured output üret
+* [x] Generated Q/A metadata'sını oluştur
+* [x] Source, page ve chunk ID bilgisini koru
 
 ---
 
 ## Phase 6 — Q/A Validation
 
-* [ ] `qa_validator.py` oluştur
-* [ ] Pydantic schema validation
-* [ ] Eksik alan kontrolü
-* [ ] Kaynakla uyumluluk kontrolü
-* [ ] Hallucination kontrolü
-* [ ] Duplicate question kontrolü
-* [ ] Validation sonucunu kaydet
-* [ ] Geçerli kayıtları dataset'e aktar
+* [x] `qa_validator.py` oluştur
+* [x] Pydantic schema validation
+* [x] Eksik alan kontrolü
+* [x] Kaynakla uyumluluk kontrolü
+* [x] Hallucination kontrolü
+* [x] Duplicate question kontrolü
+* [x] Validation sonucunu kaydet
+* [x] Geçerli kayıtları dataset'e aktar
 
 ---
 
 ## Phase 7 — JSONL Dataset
 
-* [ ] TrainingExample yapısını oluştur
-* [ ] Q/A kayıtlarını training formatına dönüştür
-* [ ] Training dataset oluştur
-* [ ] Evaluation dataset'i ayır
-* [ ] JSONL export oluştur
-* [ ] Dataset metadata'sını koru
+* [x] TrainingExample yapısını oluştur
+* [x] Q/A kayıtlarını training formatına dönüştür
+* [x] Training dataset oluştur
+* [x] Evaluation dataset'i ayır
+* [x] JSONL export oluştur
+* [x] Dataset metadata'sını koru
 
 ---
 
@@ -132,104 +131,104 @@
 
 ### Model
 
-* [ ] `model_loader.py` oluştur
-* [ ] Base model seç
-* [ ] Tokenizer yükle
-* [ ] Model/tokenizer uyumluluğunu kontrol et
+* [x] `model_loader.py` oluştur
+* [x] Base model seç
+* [x] Tokenizer yükle
+* [x] Model/tokenizer uyumluluğunu kontrol et
 
 ### LoRA / QLoRA
 
-* [ ] `lora_config.py` oluştur
-* [ ] LoRA configuration oluştur
-* [ ] Gerekirse QLoRA yaklaşımını değerlendir
-* [ ] Apple Silicon uyumluluğunu kontrol et
+* [x] `lora_config.py` oluştur
+* [x] LoRA configuration oluştur
+* [x] Gerekirse QLoRA yaklaşımını değerlendir
+* [x] Apple Silicon uyumluluğunu kontrol et
 
 ### Training
 
-* [ ] `trainer.py` oluştur
-* [ ] Training Profile oluştur
-* [ ] Learning rate belirle
-* [ ] Epoch sayısını belirle
-* [ ] Batch size belirle
-* [ ] LoRA rank / alpha / dropout değerlerini belirle
-* [ ] Training dataset yükle
-* [ ] Fine-tuning çalıştır
-* [ ] Fine-tuned modeli kaydet
+* [x] `trainer.py` oluştur
+* [x] Training Profile oluştur
+* [x] Learning rate belirle
+* [x] Epoch sayısını belirle
+* [x] Batch size belirle
+* [x] LoRA rank / alpha / dropout değerlerini belirle
+* [x] Training dataset yükle
+* [x] Fine-tuning çalıştır
+* [x] Fine-tuned modeli kaydet
 
 ---
 
 ## Phase 9 — Evaluation
 
-* [ ] `evaluator.py` oluştur
-* [ ] Held-out evaluation dataset kullan
-* [ ] Base model çıktıları oluştur
-* [ ] Fine-tuned model çıktıları oluştur
-* [ ] Base vs fine-tuned karşılaştırması yap
-* [ ] Temel metrikleri hesapla
-* [ ] Qualitative analysis yap
-* [ ] Evaluation sonuçlarını kaydet
+* [x] `evaluator.py` oluştur
+* [x] Held-out evaluation dataset kullan
+* [x] Base model çıktıları oluştur
+* [x] Fine-tuned model çıktıları oluştur
+* [x] Base vs fine-tuned karşılaştırması yap
+* [x] Temel metrikleri hesapla
+* [x] Qualitative analysis yap
+* [x] Evaluation sonuçlarını kaydet
 
 ---
 
 ## Phase 10 — Pipeline Integration
 
-* [ ] `pipeline.py` oluştur
-* [ ] Ingestion → Processing akışını bağla
-* [ ] Processing → RAG akışını bağla
-* [ ] RAG → Q/A generation akışını bağla
-* [ ] Q/A → Validation akışını bağla
-* [ ] Validation → JSONL akışını bağla
-* [ ] JSONL → Fine-tuning akışını bağla
-* [ ] Fine-tuning → Evaluation akışını bağla
-* [ ] Config üzerinden pipeline çalıştır
-* [ ] End-to-end test gerçekleştir
+* [x] `pipeline.py` oluştur
+* [x] Ingestion → Processing akışını bağla
+* [x] Processing → RAG akışını bağla
+* [x] RAG → Q/A generation akışını bağla
+* [x] Q/A → Validation akışını bağla
+* [x] Validation → JSONL akışını bağla
+* [x] JSONL → Fine-tuning akışını bağla
+* [x] Fine-tuning → Evaluation akışını bağla
+* [x] Config üzerinden pipeline çalıştır
+* [x] End-to-end test gerçekleştir
 
 ---
 
 ## Phase 11 — Testing
 
-* [ ] PDF loading testleri
-* [ ] Text cleaning testleri
-* [ ] Chunking testleri
-* [ ] Embedding testleri
-* [ ] Retrieval testleri
-* [ ] Q/A schema testleri
-* [ ] Validation testleri
-* [ ] Dataset export testleri
-* [ ] Pipeline testleri
+* [x] PDF loading testleri
+* [x] Text cleaning testleri
+* [x] Chunking testleri
+* [x] Embedding testleri
+* [x] Retrieval testleri
+* [x] Q/A schema testleri
+* [x] Validation testleri
+* [x] Dataset export testleri
+* [x] Pipeline testleri
 
 ---
 
 ## Phase 12 — Documentation
 
-* [ ] `README.md` oluştur
-* [ ] Proje amacını dokümante et
-* [ ] Mimariyi dokümante et
-* [ ] Pipeline akışını dokümante et
-* [ ] Kurulum adımlarını ekle
-* [ ] Kullanım örneği ekle
-* [ ] Örnek input/output ekle
-* [ ] Evaluation sonuçlarını ekle
-* [ ] Limitations bölümünü ekle
+* [x] `README.md` oluştur
+* [x] Proje amacını dokümante et
+* [x] Mimariyi dokümante et
+* [x] Pipeline akışını dokümante et
+* [x] Kurulum adımlarını ekle
+* [x] Kullanım örneği ekle
+* [x] Örnek input/output ekle
+* [x] Evaluation sonuçlarını ekle
+* [x] Limitations bölümünü ekle
 
 ### Project Records
 
-* [ ] `CHANGELOG.md` oluştur
-* [ ] Teknik kararları dokümante et
-* [ ] Önemli deneyleri kaydet
-* [ ] `docs/` altında mimari dokümantasyonu oluştur
+* [x] `CHANGELOG.md` oluştur
+* [x] Teknik kararları dokümante et
+* [x] Önemli deneyleri kaydet
+* [x] `docs/` altında mimari dokümantasyonu oluştur
 
 ---
 
 ## Final Checklist
 
-* [ ] Pipeline uçtan uca çalışıyor
-* [ ] Kaynak → Q/A provenance zinciri korunuyor
-* [ ] Training ve evaluation datasetleri ayrılmış
-* [ ] Base vs fine-tuned karşılaştırması mevcut
-* [ ] Testler çalışıyor
-* [ ] README tamamlandı
-* [ ] Teknik kararlar dokümante edildi
-* [ ] V1 scope dışına çıkılmadı
-* [ ] Proje tekrar çalıştırılabilir durumda
-* [ ] GitHub repository düzenli ve sunuma hazır
+* [x] Pipeline uçtan uca çalışıyor
+* [x] Kaynak → Q/A provenance zinciri korunuyor
+* [x] Training ve evaluation datasetleri ayrılmış
+* [x] Base vs fine-tuned karşılaştırması mevcut
+* [x] Testler çalışıyor
+* [x] README tamamlandı
+* [x] Teknik kararlar dokümante edildi
+* [x] V1 scope dışına çıkılmadı
+* [x] Proje tekrar çalıştırılabilir durumda
+* [x] GitHub repository düzenli ve sunuma hazır

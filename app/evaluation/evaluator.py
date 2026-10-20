@@ -10,6 +10,7 @@ from enum import Enum
 from app.schemas import EvalSampleResult, EvaluationSummary
 from app.rag.embedding import EmbeddingManager
 from app.training.model_loader import ModelLoader
+from app.evaluation.faithfulness_judge import FaithfulnessJudge
 
 class ModelEvaluator:
     """This class generates an evaluation report by comparing the responses of the fine-tuned model with those of the base model."""
@@ -18,12 +19,14 @@ class ModelEvaluator:
             base_model_id: str = "Qwen/Qwen2.5-3B-Instruct",
             adapter_path: str | Path | None = None,
             embedding_manager: EmbeddingManager | None = None,
+            judge: FaithfulnessJudge | None = None,
             max_new_tokens: int = 300,
             temperature: float = 0.2, 
             ):
         self.base_model_id = base_model_id
         self.adapter_path = Path(adapter_path) if adapter_path else None
         self.embedding_manager = embedding_manager
+        self.judge = judge
         self.max_new_tokens = max_new_tokens
         self.temperature = temperature
 
@@ -33,7 +36,7 @@ class ModelEvaluator:
             {"role": "system", "content" : " You are an expert AI Governance Advisor."},
             {"role": "user", "content": question},
         ]
-        prompt = tokenizer.apply_chat_template(messages, tokenize= False, add_generatation_prompt=True)
+        prompt = tokenizer.apply_chat_template(messages, tokenize= False, add_generation_prompt=True)
         inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
         with torch.no_grad():
@@ -79,6 +82,7 @@ class ModelEvaluator:
         for idx, item in enumerate(records,1):
             question = item["messages"][1]["content"]
             ground_truth = item["messages"][2]["content"]
+            depth = item["metadata"]["depth"]
             
             if has_adapter:
                 with model.disable_adapter():
@@ -106,7 +110,13 @@ class ModelEvaluator:
                     ft_resp, convert_to_tensor=True, normalize_embeddings=True
                 )
                     sim_ft = round(float(util.cos_sim(emb_ft, emb_gt)[0][0]), 4)
+            base_verdict: Dict[str, Any] = {"score": 0.0, "hallucinated_claims": [], "cited_standards_valid": True}
+            ft_verdict: Dict[str, Any] = {"score": 0.0, "hallucinated_claims": [], "cited_standards_valid": True}
 
+            if self.judge:
+                base_verdict = self.judge.verify(model_response=base_resp, ground_truth=ground_truth)
+                if has_adapter:
+                    ft_verdict = self.judge.verify(model_response=ft_resp, ground_truth=ground_truth)
             results.append(
                 EvalSampleResult(
                     question=question,
@@ -115,21 +125,42 @@ class ModelEvaluator:
                     finetuned_response=ft_resp if self.adapter_path else "[Adapter Not Loaded - Baseline Mode]",
                     semantic_sim_base=sim_base,
                     semantic_sim_ft=sim_ft if self.adapter_path else 0.0,
+                    faithfulness_base=base_verdict.get("score", 0.0),
+                    faithfulness_ft=ft_verdict.get("score", 0.0) if has_adapter else 0.0,
+                    hallucinations_base=base_verdict.get("hallucinated_claims", []),
+                    hallucinations_ft=ft_verdict.get("hallucinated_claims", []) if has_adapter else [],
+                    standards_valid_base=base_verdict.get("cited_standards_valid", True),
+                    standards_valid_ft=ft_verdict.get("cited_standards_valid", True) if has_adapter else True,
                     token_f1_base=0.0,
                     token_f1_ft=0.0,
+                    depth=depth,
                     sources=item.get("metadata", {}).get("sources", []),
                 )
             )
-            print(f"[{idx}/{total_records}] Base: {sim_base} | Fine-Tuned: {sim_ft}")
+            print(
+                f"[{idx}/{total_records}] "
+                f"Sim: [Base:{sim_base} | Fine-Tuned:{sim_ft}] "
+                f"Faithful: [Base:{base_verdict.get('score', 0.0)} | Fine-Tuned:{ft_verdict.get('score', 0.0)}] "
+                f"Depth: {depth}"
+            )
+            if base_verdict.get("hallucinated_claims"):
+                print(f"   ⚠️ Base Hallucination: {base_verdict['hallucinated_claims']}")
+            if ft_verdict.get("hallucinated_claims"):
+                print(f"   ⚠️ Fine-Tuned Hallucination: {ft_verdict['hallucinated_claims']}")
 
-        avg_base = round(sum(r.semantic_sim_base for r in results) / len(results), 4) if results else 0.0
-        avg_ft = round(sum(r.semantic_sim_ft for r in results) / len(results), 4) if results else 0.0
+        avg_base_sim = round(sum(r.semantic_sim_base for r in results) / len(results), 4) if results else 0.0
+        avg_ft_sim = round(sum(r.semantic_sim_ft for r in results) / len(results), 4) if results else 0.0
+        
+        avg_base_faith = round(sum(getattr(r, "faithfulness_base", 0.0) for r in results) / len(results), 4) if results else 0.0
+        avg_ft_faith = round(sum(getattr(r, "faithfulness_ft", 0.0) for r in results) / len(results), 4) if results else 0.0
         
         summary = EvaluationSummary(
                 eval_model_id=self.base_model_id,
                 total_samples=len(results),
-                avg_semantic_sim_base=avg_base,
-                avg_semantic_sim_ft=avg_ft if self.adapter_path else 0.0,
+                avg_semantic_sim_base=avg_base_sim,
+                avg_semantic_sim_ft=avg_ft_sim if has_adapter else 0.0,
+                avg_faithfulness_base=avg_base_faith,
+                avg_faithfulness_ft=avg_ft_faith if has_adapter else 0.0,
                 avg_token_f1_base=0.0,
                 avg_token_f1_ft=0.0,
                 samples=results,
@@ -137,10 +168,12 @@ class ModelEvaluator:
             )
 
         print("\n" + "=" * 50)
-        print(f"📊 COMPARISON REPORT ({total_records} samples)")
-        print(f"Average Similarity of Raw Base Model       : {avg_base}")
-        print(f"Fine-Tuned Model Average Similarity    : {avg_ft}")
-        print(f"Net Improvement (Delta)                    : +{round(avg_ft - avg_base, 4)}")
+        print(f"📊 COMPARISON & FAITHFULNESS AUDIT REPORT ({total_records} samples)")
+        print(f"Base Model Average Similarity          : {avg_base_sim}")
+        print(f"Fine-Tuned Model Average Similarity   : {avg_ft_sim} (Delta: {round(avg_ft_sim - avg_base_sim, 4):+})")
+        if self.judge:
+            print(f"Base Model Faithfulness Score         : {avg_base_faith}")
+            print(f"Fine-Tuned Model Faithfulness Score    : {avg_ft_faith} (Delta: {round(avg_ft_faith - avg_base_faith, 4):+})")
         print("=" * 50)
 
         if output_file:

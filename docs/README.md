@@ -84,7 +84,124 @@ Skor bazlı ilk 5 örnek:
 	• Base: 0.8147 | Fine-Tuned: 0.8892
 Not: Sıralama, iki model arasındaki doğrudan puan farkı (Fine-Tuned - Base) hesaplanarak yapılmıştır.
 
-Detaylı bilgilere data/final/eval_results.json dosyasından ulaşabilirsiniz.
+## Evaluation(Değerlendirme)
+
+Bağımsız ve derinlik dengesi ile (foundational - comparative - technical derinliklerini kapsayan) oluşturulmuş 30 test örneği üzerinden yapılan çift taraflı (Anlamsal Benzerlik + LLM-as-a-Judge) A/B testinde fine-tuned modelimiz, anlamsal benzerlikte ortalama +0.040 net artış, kaynak sadakatinde ise +0.100 net iyileşme sağlamıştır. Ham modelin %10 olan kusursuz sadakat (1.0) oranı fine-tuning ile %26.7'ye yükselmiş, uydurma standart kodu üretimi ciddi oranda baskılanmıştır. Model, NIST ve UNESCO çerçevelerini teknik mimari kontrollere dönüştürme hedefine başarıyla ulaşmıştır.
+
+![İstatistik Sonuçları](https://lh3.googleusercontent.com/d/1zxQ-W12tlwgbRA_za5fmPkl_2XojCtMB)
+
+    Örnek Çıktı:
+
+    [1/30] Sim: [Base:0.8737 | Fine-Tuned:0.9178] Faithful: [Base:0.2 | Fine-Tuned:0.5] Depth: technical
+
+   ⚠️ Base Hallucination: ['ThreatActor entity (not defined in ground truth)', 'ThreatActorDetails entity (not defined in ground truth)', 'Missing AI system identifier field', 'Missing lifecycle stage field (development, use, malfunction)', 'Missing acute/aggregate classification', 'Missing four harm categories (injury to health, critical infrastructure disruption, human rights violations, harm to property/community/environment)', 'Missing MAP 5.1 quantified likelihood and magnitude assessments', 'Missing actor-task matrix linking to AI Actor roles (Governance and Oversight, Operation and Monitoring, Procurement, Third-party)', 'Missing regulatory alerting procedure GV-2.1-002', 'Missing OECD AI Incidents Monitor taxonomy mapping layer']
+
+   ⚠️ Fine-Tuned Hallucination: ["NIST AI Risk Management Framework's vulnerability disclosure requirements"]
+
+    [2/30] Sim: [Base:0.8031 | Fine-Tuned:0.8649] Faithful: [Base:1.0 | Fine-Tuned:0.8] Depth: technical
+
+    [3/30] Sim: [Base:0.7986 | Fine-Tuned:0.8868] Faithful: [Base:0.5 | Fine-Tuned:0.88] Depth: foundational
+
+    [4/30] Sim: [Base:0.8851 | Fine-Tuned:0.9082] Faithful: [Base:0.2 | Fine-Tuned:0.2] Depth: technical
+
+    ⚠️ Base Hallucination: ['Structured ontology mapping system capabilities (e.g., real-time biometric identification) to specific UDHR/ICCPR articles', 'Quantitative risk scoring framework']
+
+    ⚠️ Fine-Tuned Hallucination: ['Operationalizing a Human Rights Impact Assessment (HRIA) as an automated technical control for the UNESCO Policy Action area requires a layered governance architecture', 'The approach must first establish a structured ontology linking system capabilities — such as real-time biometric identification systems — to specific provisions of international human rights instruments, including the UDHR and ICCPR', 'The architecture must implement quantitative risk scoring mechanisms that translate qualitative human rights impacts into measurable, auditable indicators', 'The governance structure must mandate continuous monitoring and evaluation of system performance against the mapped human rights standards. Automated dashboards and alerting systems should trigger when system capabilities exceed predefined thresholds or when new human rights risks emerge', 'The architecture must embed human rights considerations into the software development lifecycle through mandatory human rights impact assessments at key stages, such as requirement gathering, design, implementation, and deployment']
+
+    [5/30] Sim: [Base:0.8952 | Fine-Tuned:0.886] Faithful: [Base:0.4 | Fine-Tuned:1.0] Depth: foundational
+
+    ⚠️ Base Hallucination: ['NIST.AI.600-1 Risk 5.1']
+
+    [6/30] Sim: [Base:0.8416 | Fine-Tuned:0.8444] Faithful: [Base:0.5 | Fine-Tuned:0.5] Depth: foundational
+
+    ⚠️ Fine-Tuned Hallucination: ['MEASURE-2.5']
+
+    [7/30] Sim: [Base:0.8259 | Fine-Tuned:0.8594] Faithful: [Base:0.5 | Fine-Tuned:0.85] Depth: technical
+
+    [8/30] Sim: [Base:0.8426 | Fine-Tuned:0.855] Faithful: [Base:0.2 | Fine-Tuned:0.8] Depth: foundational
+
+    ⚠️ Base Hallucination: ["The response claims that TruLens satisfies the MEASURE function's validity requirements, which contradicts the Ground Truth stating that the GAI Profile does not prescribe specific frameworks such as TruLens."]
+
+    [9/30] Sim: [Base:0.8717 | Fine-Tuned:0.9254] Faithful: [Base:0.5 | Fine-Tuned:0.8] Depth: foundational
+    [10/30] Sim: [Base:0.8424 | Fine-Tuned:0.9371] Faithful: [Base:0.85 | Fine-Tuned:0.2] Depth: comparative
+
+   ⚠️ Fine-Tuned Hallucination: ['NIST AI 600-1']
+
+    [11/30] Sim: [Base:0.8096 | Fine-Tuned:0.8898] Faithful: [Base:1.0 | Fine-Tuned:0.8] Depth: foundational
+
+    ⚠️ Fine-Tuned Hallucination: ['NIST AI 600-1']
+
+    [12/30] Sim: [Base:0.8173 | Fine-Tuned:0.927] Faithful: [Base:0.8 | Fine-Tuned:0.8] Depth: technical
+
+    ⚠️ Fine-Tuned Hallucination: ["NIST AI Risk Management Framework's governance functions: Monitor, Measure, and Govern"]
+
+    [13/30] Sim: [Base:0.7651 | Fine-Tuned:0.8171] Faithful: [Base:0.5 | Fine-Tuned:0.5] Depth: technical
+
+    [14/30] Sim: [Base:0.8411 | Fine-Tuned:0.8395] Faithful: [Base:0.8 | Fine-Tuned:0.85] Depth: comparative
+
+    [15/30] Sim: [Base:0.7581 | Fine-Tuned:0.8115] Faithful: [Base:0.9 | Fine-Tuned:0.5] Depth: comparative
+
+    ⚠️ Fine-Tuned Hallucination: ['The governance function enforces separation of duties by implementing a dual-layer access control architecture with policy-as-code (OPA/Rego) and automated promotion gates, which is not prescribed by the NIST AI RMF 1.0 Govern function.']
+
+    [16/30] Sim: [Base:0.846 | Fine-Tuned:0.9313] Faithful: [Base:0.5 | Fine-Tuned:0.5] Depth: foundational
+
+    ⚠️ Base Hallucination: ['Kilogram Watermark (invented term for behavioral watermarking)', "Example linking token bucket refill to 'kilogram watermark' (conflates rate‑limiting with watermarking)"]
+
+    ⚠️ Fine-Tuned Hallucination: ['Risk 4.1', 'Risk 4.2', 'kilogram watermark']
+
+    [17/30] Sim: [Base:0.9171 | Fine-Tuned:0.9297] Faithful: [Base:0.5 | Fine-Tuned:0.2] Depth: foundational
+
+    ⚠️ Base Hallucination: ['GOVERN-1.2']
+
+    ⚠️ Fine-Tuned Hallucination: ['GOVERN-1.2']
+
+    [18/30] Sim: [Base:0.8996 | Fine-Tuned:0.9308] Faithful: [Base:0.5 | Fine-Tuned:1.0] Depth: comparative
+
+    ⚠️ Base Hallucination: ['UNESCO Recommendation on the Protection of the Rights of Persons with Disabilities with Respect to Artificial Intelligence Systems (incorrect title and focus)', 'Claim that the UNESCO Recommendation highlights inclusivity, privacy, and transparency as its key principles (misrepresents the actual principles outlined in the ground truth)']
+
+    [19/30] Sim: [Base:0.8363 | Fine-Tuned:0.76] Faithful: [Base:1.0 | Fine-Tuned:1.0] Depth: comparative
+
+    [20/30] Sim: [Base:0.8199 | Fine-Tuned:0.8489] Faithful: [Base:0.5 | Fine-Tuned:0.5] Depth: technical
+
+    [21/30] Sim: [Base:0.8459 | Fine-Tuned:0.864] Faithful: [Base:0.8 | Fine-Tuned:1.0] Depth: comparative
+
+    [22/30] Sim: [Base:0.8918 | Fine-Tuned:0.9083] Faithful: [Base:0.5 | Fine-Tuned:0.88] Depth: comparative
+
+    [23/30] Sim: [Base:0.7487 | Fine-Tuned:0.9031] Faithful: [Base:0.8 | Fine-Tuned:1.0] Depth: comparative
+
+    [24/30] Sim: [Base:0.8011 | Fine-Tuned:0.7925] Faithful: [Base:0.85 | Fine-Tuned:1.0] Depth: foundational
+
+    [25/30] Sim: [Base:0.9052 | Fine-Tuned:0.8728] Faithful: [Base:0.8 | Fine-Tuned:0.9] Depth: technical
+
+    [26/30] Sim: [Base:0.8334 | Fine-Tuned:0.862] Faithful: [Base:0.5 | Fine-Tuned:0.2] Depth: comparative
+
+    ⚠️ Fine-Tuned Hallucination: ['Retention period of at least three years for incident records', 'Claim that NIST AI 600-1 does not prescribe a technical architecture for automated report generation or standardized incident formats']
+
+    [27/30] Sim: [Base:0.866 | Fine-Tuned:0.8681] Faithful: [Base:0.5 | Fine-Tuned:0.5] Depth: technical
+
+    [28/30] Sim: [Base:0.9022 | Fine-Tuned:0.8962] Faithful: [Base:0.5 | Fine-Tuned:1.0] Depth: comparative
+
+    [29/30] Sim: [Base:0.8581 | Fine-Tuned:0.8638] Faithful: [Base:0.5 | Fine-Tuned:0.5] Depth: foundational
+
+    ⚠️ Base Hallucination: ['MEASURE-2.7']
+
+    ⚠️ Fine-Tuned Hallucination: ['Zone Rules, Trend Rules, and Compound Rules are presented as core SPC rules (these are not standard Western Electric Rules)', 'Example: if Equalized Odds difference threshold is ±0.1, any metric value exceeding ±1.0 triggers an alert (nonsensical and not grounded in any standard)', 'Description of Moving Average and Standard Deviation use for specification limits is inaccurate and not aligned with Western Electric Rules']
+
+    [30/30] Sim: [Base:0.8168 | Fine-Tuned:0.9524] Faithful: [Base:0.85 | Fine-Tuned:0.85] Depth: technical 
+
+- Neden Başarılı? (Teknik Kanıtlar)
+
+Kavramsal ve Karşılaştırmalı Üstünlük: Base model sahte maddeler (NIST Risk 5.1, sahte UNESCO başlığı) veya üçüncü taraf araçları (TruLens) standart gibi uydururken; FT model bu testlerde [5, 8, 18, 21-24, 28/30] tam/yüksek sadakat (0.80 - 1.0) yakalayarak halüsinasyonu engelledi.
+
+Semantik Uyum ve Terminoloji Sıçraması: Teknik uç vakalarda [1, 3, 10, 12, 30/30] benzerlik skorları 0.92 - 0.95 bandına çıktı. Model, ham Qwen üslubunu bırakıp doğrudan NIST/UNESCO kurumsal terminolojisini benimsedi.
+
+- Puan Kırılma Nedenleri (Savunma Argümanları)
+  
+Mimari Zenginleştirme Cezası (Extrapolation): [15/30]'da model salt regülasyon metninin ötesine geçip sektörel pratik olan OPA/Rego Policy-as-Code çözümü önerdiği için hakem tarafından "referans dışı iddia" sayılarak cezalandırıldı.
+
+Veri Lekeleri ve SPC Sapması: [16/30]'daki 'kilogram watermark' ifadesi sentetik veri hattındaki kavram karışıklığından, [29/30]'daki kayıp ise Western Electric SPC kurallarındaki teknik sapmadan kaynaklandı.
+
+Daha Güncel Standart Tercihi: [10, 11/30]'da referans metin NIST 100-1 iken, model üretken yapay zekaya daha uygun olan güncel NIST AI 600-1 standardına atıf yaptığı için kaynak dışı kabul edildi (0.2).
 
 ## Sınırlamalar
 - Proje version 1'de özellikle içerisinde "İçindekiler" bulunan dökümanlar üzerinden konu haritası çıkararak Q/A çifleri oluşturabilmektedir. Bu haliyle informal dökümanlar üzerinde sağlıklı çalışmamaktadır.

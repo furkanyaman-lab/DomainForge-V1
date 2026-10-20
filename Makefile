@@ -18,17 +18,17 @@ help:
 	@echo "======================================================================"
 	@echo "                DomainForge V1 Pipeline CLI                          "
 	@echo "======================================================================"
-	@echo "  make setup          : Sanal ortamı kurar ve paketleri yükler"
-	@echo "  make ingest         : PDF dokümanlarını okur, böler ve ChromaDB'ye gömer"
-	@echo "  make generate       : RAG ile bağlam çeker, sentetik Q/A üretir ve filtreler"
-	@echo "                        (Opsiyonel: make generate COUNT=5)"
-	@echo "  make format         : Q/A verilerini ChatML formatına sokar ve Train/Eval böler"
-	@echo "  make train          : LoRA fine-tuning eğitimini başlatır"
-	@echo "  make eval           : Held-out test seti üzerinde modeli değerlendirir"
-	@echo "  make all            : Tüm boru hattını baştan sona icra eder"
-	@echo "  make show-eval      : Son değerlendirme özetini (JSON) ekrana basar"
-	@echo "  make status         : Üretilen veri ve model durumunu listeler"
-	@echo "  make clean          : İşlenmiş geçici verileri ve cache'leri temizler"
+	@echo "  make setup          : Sets up the virtual environment and installs packages"
+    @echo "  make ingest         : Reads PDF documents, splits them and ingests them into ChromaDB"
+    @echo "  make generate       : Retrieves context using RAG, generates synthetic Q&A and filters it"
+	@echo "                        (Optional: make generate COUNT=5)"
+    @echo "  make format         : Converts Q&A data into ChatML format and splits it into Train and Eval sets"
+    @echo "  make train          : Starts LoRA fine-tuning training"
+    @echo "  make eval           : Evaluates the model on the held-out test set"
+	@echo "  make all            : Runs the entire pipeline from start to finish"
+    @echo "  make show-eval      : Prints the final evaluation summary (JSON) to the screen"
+    @echo "  make status         : Lists the status of the generated data and model"
+    @echo "  make clean          : Clears processed temporary data and caches"
 	@echo "======================================================================"
 
 # --- KURULUM ---
@@ -36,7 +36,7 @@ setup:
 	python3.11 -m venv $(VENV)
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
-	@echo "✅ Ortam kurulumu tamamlandı."
+	@echo "✅ The environment has been set up."
 
 # --- PIPELINE AŞAMALARI ---
 
@@ -60,8 +60,8 @@ eval:
 	@echo "🔹 [STAGE 5] Model Evaluation & Benchmarking..."
 	$(PYTHON) app/pipeline.py --stage eval
 
-all: ingest generate format eval
-	@echo "🎉 Uçtan uca boru hattı başarıyla tamamlandı!"
+all: ingest generate format train eval
+	@echo "🎉 The end-to-end pipeline has been successfully completed!"
 
 # --- DENETİM VE GÖRÜNTÜLEME ---
 
@@ -71,16 +71,16 @@ show-eval:
 	elif [ -f "data/final/eval_results.json" ]; then \
 		cat data/final/eval_results.json; \
 	else \
-		echo "⚠️ Henüz değerlendirme raporu bulunamadı."; \
+		echo "⚠️ No assessment report has been found yet."; \
 	fi
 
 status:
 	@echo "=== DOMAINFORGE VERİ DURUMU ==="
-	@echo -n "ChromaDB Dizini      : " && ls -d data/chroma_db 2>/dev/null || echo "Bulunamadı"
-	@echo -n "Doğrulanmış Q/A (Satır): " && wc -l data/processed/qa_dataset.jsonl 2>/dev/null || echo "0"
-	@echo -n "Train Seti (Satır)    : " && wc -l data/final/train.jsonl 2>/dev/null || echo "0"
-	@echo -n "Eval Seti (Satır)     : " && wc -l data/final/eval.jsonl 2>/dev/null || echo "0"
-	@echo -n "Fine-Tuned Model     : " && ls -d models/fine-tuned-governance 2>/dev/null || echo "Henüz eğitilmedi"
+	@echo -n "ChromaDB Directory      : " && ls -d data/chroma_db 2>/dev/null || echo "Not found""
+	@echo -n "Verified Q&A (Line): " && wc -l data/processed/qa_dataset.jsonl 2>/dev/null || echo "0"
+	@echo -n "Train Set (Row)    : " && wc -l data/final/train.jsonl 2>/dev/null || echo "0"
+	@echo -n "Eval Set (Row)     : " && wc -l data/final/eval.jsonl 2>/dev/null || echo "0"
+	@echo -n "Fine-Tuned Model     : " && ls -d models/fine-tuned-governance 2>/dev/null || echo "Has not yet been trained"
 
 clean:
 	rm -rf data/processed/*.jsonl
@@ -88,4 +88,4 @@ clean:
 	rm -rf data/final/*.json
 	rm -rf data/chroma_db
 	find . -type d -name "__pycache__" -exec rm -rf {} +
-	@echo "🧹 Geçici veri setleri ve önbellekler temizlendi."
+	@echo "🧹 Temporary data sets and caches have been cleared."
