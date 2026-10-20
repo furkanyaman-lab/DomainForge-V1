@@ -8,9 +8,9 @@ PYTHON := $(VENV)/bin/python
 PIP := $(VENV)/bin/pip
 
 # Varsayılan Parametreler (Komut satırından ezilebilir: make generate COUNT=5)
-COUNT ?= 2
+COUNT ?= 150
 STAGE ?= all
-MODEL ?= deepseek-r1:14b
+MODEL ?= nvidia/nemotron-3-ultra-550b-a55b:free
 
 .PHONY: help setup ingest generate format train eval all clean status show-eval
 
@@ -19,16 +19,16 @@ help:
 	@echo "                DomainForge V1 Pipeline CLI                          "
 	@echo "======================================================================"
 	@echo "  make setup          : Sets up the virtual environment and installs packages"
-    @echo "  make ingest         : Reads PDF documents, splits them and ingests them into ChromaDB"
-    @echo "  make generate       : Retrieves context using RAG, generates synthetic Q&A and filters it"
+	@echo "  make ingest         : Reads PDF documents, splits them and ingests them into ChromaDB"
+	@echo "  make generate       : Retrieves context using RAG, generates synthetic Q&A and filters it"
 	@echo "                        (Optional: make generate COUNT=5)"
-    @echo "  make format         : Converts Q&A data into ChatML format and splits it into Train and Eval sets"
-    @echo "  make train          : Starts LoRA fine-tuning training"
-    @echo "  make eval           : Evaluates the model on the held-out test set"
+	@echo "  make format         : Converts Q&A data into ChatML format and splits it into Train and Eval sets"
+	@echo "  make train          : Starts LoRA fine-tuning training"
+	@echo "  make eval           : Evaluates the model on the held-out test set"
 	@echo "  make all            : Runs the entire pipeline from start to finish"
-    @echo "  make show-eval      : Prints the final evaluation summary (JSON) to the screen"
-    @echo "  make status         : Lists the status of the generated data and model"
-    @echo "  make clean          : Clears processed temporary data and caches"
+	@echo "  make show-eval      : Prints the final evaluation summary (JSON) to the screen"
+	@echo "  make status         : Lists the status of the generated data and model"
+	@echo "  make clean          : Clears processed temporary data and caches"
 	@echo "======================================================================"
 
 # --- KURULUM ---
@@ -76,11 +76,11 @@ show-eval:
 
 status:
 	@echo "=== DOMAINFORGE VERİ DURUMU ==="
-	@echo -n "ChromaDB Directory      : " && ls -d data/chroma_db 2>/dev/null || echo "Not found""
-	@echo -n "Verified Q&A (Line): " && wc -l data/processed/qa_dataset.jsonl 2>/dev/null || echo "0"
-	@echo -n "Train Set (Row)    : " && wc -l data/final/train.jsonl 2>/dev/null || echo "0"
-	@echo -n "Eval Set (Row)     : " && wc -l data/final/eval.jsonl 2>/dev/null || echo "0"
-	@echo -n "Fine-Tuned Model     : " && ls -d models/fine-tuned-governance 2>/dev/null || echo "Has not yet been trained"
+	@echo -n "ChromaDB Directory  : " && (ls -d data/chroma_db 2>/dev/null || echo "Not found")
+	@echo -n "Verified Q&A (Line) : " && (wc -l data/processed/qa_dataset.jsonl 2>/dev/null || echo "0")
+	@echo -n "Train Set (Row)     : " && (wc -l data/final/train.jsonl 2>/dev/null || echo "0")
+	@echo -n "Eval Set (Row)      : " && (wc -l data/final/eval.jsonl 2>/dev/null || echo "0")
+	@echo -n "Fine-Tuned Model    : " && (ls -d models/fine-tuned-governance 2>/dev/null || echo "Has not yet been trained")
 
 clean:
 	rm -rf data/processed/*.jsonl

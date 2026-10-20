@@ -15,6 +15,15 @@ Proje;
      Ingestion -> Processing -> RAG -> Q/A Generation -> Q/A Validation -> JSONL/Formatting -> Fine-Tuning -> Evaluation 
      akışından oluşmaktadır.
 
+> 1. **Ingestion (Veri Alımı):** NIST AI 100-1, 600-1 ve UNESCO resmi standart PDF'leri sisteme aktarılır.
+> 2. **Processing (Ön İşleme):** Doküman gürültüleri temizlenir; bağlamı korumak adına semantik parçalama (chunking) ve metadata etiketleme uygulanır.
+> 3. **RAG / Indexing (Vektörleştirme):** Parçalanan metinler `SentenceTransformers` ile vektörleştirilerek yerel arama indeksine kaydedilir.
+> 4. **Q/A Generation (Sentetik Üretim):** Öğretici LLM motoru, RAG bağlamını kullanarak `foundational`, `technical` ve `comparative` derinliklerde teknik ve ragülatif soru-cevap çiftleri üretir.
+> 5. **Q/A Validation (Kalite Filtresi):** Üretilen veriler kayıt öncesi Pydantic şema denetimiyle %85 benzerlik eşiğiyle tekilleştirme (deduplication) ve kaynaksız iddiaları eleyen anti-halüsinasyon filtreleri çalıştırılır. Bu aşamadaki eleme nihai soru-cevap çift sayısını etkilemez, yerine üretim yapılır.
+> 6. **JSONL Formatting & Splitting:** Doğrulanmış veriler ChatML şablonuna dönüştürülür; dengeli olacak şekilde konu dağılımına göre **Train** ve **Eval** kümelerine bölünür.
+> 7. **Fine-Tuning (PEFT/LoRA):** `Qwen2.5-3B-Instruct` taban modeli; tüm lineer katmanları hedefleyen LoRA ($r=16, \alpha=32$) mimarisi ve bellek korumalı parametrelerle (`batch=1`, `acc=8`) eğitilir.
+> 8. **Evaluation (A/B Benchmark):** Taban ve eğitilmiş model; Cosine Similarity (anlamsal benzerlik) ve bağımsız bir hakem LLM (LLM-as-a-Judge) üzerinden sadakat ve halüsinasyon testlerine tabi tutulur.
+
 ## Teknoloji yığını
 Proje Python dili ile yazılmış olup projede; PDF parsing, text preprocessing, chunking, embeddings, vector database, RAG, reranker, LLM, structured output/JSONL, Hugging Face Transformers, PEFT/LoRA ve temel model değerlendirme yöntemleri kullanılmıştır.
 
@@ -26,6 +35,7 @@ Proje Python dili ile yazılmış olup projede; PDF parsing, text preprocessing,
     "data/interim" : Dökümanlardan çıkarılan konu haritaları ve anahatar kelimeler,
     "models" : Üretim sonucu/ Fine Tuned Model,
     "notebooks" : Mimariye dair deneysel çalışmalar,
+    "docs" : Projeye ait dökümantasyon
     "app/ingestion" : Projenin Ingesiton Mimarisi,
     "app/rag" : Projenin RAG Mimarisi,
     "app/generation" : Projenin Q/A Generation Mimarisi,
@@ -33,21 +43,23 @@ Proje Python dili ile yazılmış olup projede; PDF parsing, text preprocessing,
     "app/evaluation" : Projenin Evaluation Mimarisi
 
 ## Kurulum § Ortam kurulumu
-Proje için Makefile dosyası oluşturulmuş olup terminalde "make setup" komutuyla kurulum tamamlanacaktır.
+Proje için Makefile dosyası oluşturulmuş olup terminalde "make setup" komutuyla kurulum tamamlanacaktır. 
 
 ## Çalıştırma talimatları
-Pipeline aşamaları "make" komutuyla çalıştırılabilir durumdadır. Detaylı bilgiye Makefile dosyasından ulaşabilirsiniz. Örnek komutlar:
+Pipeline aşamaları "make" komutuyla çalıştırılabilir durumdadır. Detaylı bilgiye Makefile dosyasından ve DEMO.md üzerinden ulaşabilirsiniz. Örnek komutlar:
 - "make ingest" -> Ingestion ve vektörleştirme aşamalarını tetikler
-- "make generate" -> Q/A Generation ve Validation aşamalrını tetikler
+- "make generate" -> Q/A Generation ve Validation aşamalarını tetikler
 - "make format" -> Veriyi eğitime hazır hale getirir
 - "make train" -> Hazırlanan veriler üzerinden fine-tuning işlemini başlatır
 - "make eval" -> Base ve Fine-Tuned Model üzerinden Evaluation ve Benchmarking sonuçlarını çıkarır.
 
 ## Kullanım örneği
-Projenin generate aşamasında:
-    "make generate COUNT=150 MODEL="nvidia/nemotron-3-ultra-550b-a55b:free" 
-    komutu ile beraber üretim başlar.
-    Komutta yer alan "COUNT=" bölümü oluşturulacak nihai soru sayısını, "MODEL=" kısmı da üretimde kullanılacak modeli belirtir.
+Proje terminal üzerinden;
+
+```bash
+make all
+```
+komutuyla baştan sona çalıştırılır. 
 
 ## Örnek çıktılar
 Projenin eval aşamasında alınan örnek bir çıktı aşağıda verilmiştir.
