@@ -90,13 +90,14 @@ Bağımsız ve derinlik dengesi ile (foundational - comparative - technical deri
 
 ![İstatistik Sonuçları](https://lh3.googleusercontent.com/d/1zxQ-W12tlwgbRA_za5fmPkl_2XojCtMB)
 
-    Örnek Çıktı:
+    Evaluation Çıktısı (Tam Döküm):
+
 
     [1/30] Sim: [Base:0.8737 | Fine-Tuned:0.9178] Faithful: [Base:0.2 | Fine-Tuned:0.5] Depth: technical
 
-   ⚠️ Base Hallucination: ['ThreatActor entity (not defined in ground truth)', 'ThreatActorDetails entity (not defined in ground truth)', 'Missing AI system identifier field', 'Missing lifecycle stage field (development, use, malfunction)', 'Missing acute/aggregate classification', 'Missing four harm categories (injury to health, critical infrastructure disruption, human rights violations, harm to property/community/environment)', 'Missing MAP 5.1 quantified likelihood and magnitude assessments', 'Missing actor-task matrix linking to AI Actor roles (Governance and Oversight, Operation and Monitoring, Procurement, Third-party)', 'Missing regulatory alerting procedure GV-2.1-002', 'Missing OECD AI Incidents Monitor taxonomy mapping layer']
+    ⚠️ Base Hallucination: ['ThreatActor entity (not defined in ground truth)', 'ThreatActorDetails entity (not defined in ground truth)', 'Missing AI system identifier field', 'Missing lifecycle stage field (development, use, malfunction)', 'Missing acute/aggregate classification', 'Missing four harm categories (injury to health, critical infrastructure disruption, human rights violations, harm to property/community/environment)', 'Missing MAP 5.1 quantified likelihood and magnitude assessments', 'Missing actor-task matrix linking to AI Actor roles (Governance and Oversight, Operation and Monitoring, Procurement, Third-party)', 'Missing regulatory alerting procedure GV-2.1-002', 'Missing OECD AI Incidents Monitor taxonomy mapping layer']
 
-   ⚠️ Fine-Tuned Hallucination: ["NIST AI Risk Management Framework's vulnerability disclosure requirements"]
+    ⚠️ Fine-Tuned Hallucination: ["NIST AI Risk Management Framework's vulnerability disclosure requirements"]
 
     [2/30] Sim: [Base:0.8031 | Fine-Tuned:0.8649] Faithful: [Base:1.0 | Fine-Tuned:0.8] Depth: technical
 
@@ -125,7 +126,7 @@ Bağımsız ve derinlik dengesi ile (foundational - comparative - technical deri
     [9/30] Sim: [Base:0.8717 | Fine-Tuned:0.9254] Faithful: [Base:0.5 | Fine-Tuned:0.8] Depth: foundational
     [10/30] Sim: [Base:0.8424 | Fine-Tuned:0.9371] Faithful: [Base:0.85 | Fine-Tuned:0.2] Depth: comparative
 
-   ⚠️ Fine-Tuned Hallucination: ['NIST AI 600-1']
+    ⚠️ Fine-Tuned Hallucination: ['NIST AI 600-1']
 
     [11/30] Sim: [Base:0.8096 | Fine-Tuned:0.8898] Faithful: [Base:1.0 | Fine-Tuned:0.8] Depth: foundational
 
@@ -189,21 +190,25 @@ Bağımsız ve derinlik dengesi ile (foundational - comparative - technical deri
 
     [30/30] Sim: [Base:0.8168 | Fine-Tuned:0.9524] Faithful: [Base:0.85 | Fine-Tuned:0.85] Depth: technical 
 
-- Neden Başarılı? (Teknik Kanıtlar)
+### Neden Başarılı? (Teknik Kanıtlar)
 
-Kavramsal ve Karşılaştırmalı Üstünlük: Base model sahte maddeler (NIST Risk 5.1, sahte UNESCO başlığı) veya üçüncü taraf araçları (TruLens) standart gibi uydururken; FT model bu testlerde [5, 8, 18, 21-24, 28/30] tam/yüksek sadakat (0.80 - 1.0) yakalayarak halüsinasyonu engelledi.
+- Kavramsal ve Karşılaştırmalı Üstünlük: Base model halüsinatif maddeler (NIST Risk 5.1, sahte UNESCO başlığı) veya üçüncü taraf araçları (TruLens) standart gibi kullanırken; Fine-Tuned model bu testlerde [5, 8, 18, 21-24, 28] tam/yüksek sadakat (0.80 - 1.0) yakalayarak halüsinasyonu engelledi.
 
-Semantik Uyum ve Terminoloji Sıçraması: Teknik uç vakalarda [1, 3, 10, 12, 30/30] benzerlik skorları 0.92 - 0.95 bandına çıktı. Model, ham Qwen üslubunu bırakıp doğrudan NIST/UNESCO kurumsal terminolojisini benimsedi.
+- Semantik Uyum ve Terminoloji Sıçraması: Teknik uç vakalarda [1, 3, 10, 12, 30] benzerlik skorları 0.92 - 0.95 bandına çıktı. Model, ham Qwen üslubunu bırakıp doğrudan NIST/UNESCO kurumsal terminolojisini benimsedi.
 
-- Puan Kırılma Nedenleri (Savunma Argümanları)
+- İstatistiksel Üstünlük: Fine-Tuned Model, 30 testin 24'ünde skor üstünlüğüne sahipken base modele kıyasla 2.7 kat daha fazla regülatif uyum göstermiştir. Öte yandan Fine-Tuned model 0.5 puan altı ciddi ragülatif hata riskini de %40 oranında azaltmıştır.
+
+### Puan Kırılma Nedenleri (Savunma Argümanları)
   
-Mimari Zenginleştirme Cezası (Extrapolation): [15/30]'da model salt regülasyon metninin ötesine geçip sektörel pratik olan OPA/Rego Policy-as-Code çözümü önerdiği için hakem tarafından "referans dışı iddia" sayılarak cezalandırıldı.
+- Mimari Zenginleştirme Cezası (Extrapolation): [15/30]'da model salt regülasyon metninin ötesine geçip sektörel pratik olan OPA/Rego Policy-as-Code çözümü önerdiği için hakem tarafından "referans dışı iddia" sayılarak cezalandırıldı.
 
-Veri Lekeleri ve SPC Sapması: [16/30]'daki 'kilogram watermark' ifadesi sentetik veri hattındaki kavram karışıklığından, [29/30]'daki kayıp ise Western Electric SPC kurallarındaki teknik sapmadan kaynaklandı.
+- Veri Lekeleri ve SPC Sapması: [16/30]'daki 'kilogram watermark' ifadesi sentetik veri hattındaki kavram karışıklığından, [29/30]'daki kayıp ise Western Electric SPC kurallarındaki teknik sapmadan kaynaklandı.
 
-Daha Güncel Standart Tercihi: [10, 11/30]'da referans metin NIST 100-1 iken, model üretken yapay zekaya daha uygun olan güncel NIST AI 600-1 standardına atıf yaptığı için kaynak dışı kabul edildi (0.2).
+- Daha Güncel Standart Tercihi: [10, 11]'de referans metin NIST 100-1 iken, model üretken yapay zekaya daha uygun olan güncel NIST AI 600-1 standardına atıf yaptığı için kaynak dışı kabul edildi (0.2).
 
 ## Sınırlamalar
+- Model MVP (Asgari Uygulanabilir Ürün) niteliğinde olduğundan dar döküman dağarcığı ve model hacmi nedeniyle alan hakimiyeti ve derinliği profesyonel kullanıma göre sınırlı kalmaktadır.
+- Veri setindeki kavram ve teknik sapmalar her ne kadar "Q/A Validation" mimarisi ile minimuma indirilmeye çalışılsa da sızıntılar model performansını etkilemektedir.
 - Proje version 1'de özellikle içerisinde "İçindekiler" bulunan dökümanlar üzerinden konu haritası çıkararak Q/A çifleri oluşturabilmektedir. Bu haliyle informal dökümanlar üzerinde sağlıklı çalışmamaktadır.
 - Öte yandan testler pdf dosyaları üzerinden gerçekleştirilmiş olup görsel, tablolar vb dosyaları desteklememektedir.
 - Her ne kadar bir otomasyon projesi olsa da veri temizleme aşamasında her kaynağa özel regex kodları yazılması gerektiğinden tamamıyla sürecin otomasyon haline getirildiği iddia edilememektedir.
@@ -211,4 +216,4 @@ Daha Güncel Standart Tercihi: [10, 11/30]'da referans metin NIST 100-1 iken, mo
 ## Gelecekteki iyileştirmeler
 - Projenin ilerleyen aşamalarda multimodal RAG sistemiyle tablolar, görseller vb diğer dosyaların destekelmesi sağlanabilir,
 - Multi-Agent akışları oluşturularak veri düzenleme, profil oluşturma, şemalar ai destekli senaryolar hazırlanabilir, otomasyon oranı artırılabilir,
-- Halihazırda proje tek model üzerinden ilerlemekte olup ilerleyen safhalarda verisetine göre farklı modellerin kullanıulması sağlanabilir,
+- Halihazırda proje tek model üzerinden ilerlemekte olup ilerleyen safhalarda verisetine göre farklı modellerin kullanılması sağlanabilir.

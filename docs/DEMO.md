@@ -18,7 +18,7 @@ make setup
 
 ### 2. Doküman Alımı ve Vektörleştirme (Ingestion Pipeline)
 
-Alana özgü ham dokümanları (NIST AI 100-1, 600-1 ve UNESCO) sisteme aktarın:
+Alana özgü ham dokümanları (NIST AI 100-1, 600-1 ve UNESCO: Recommendation on the Ethics of Artificial Intelligence) sisteme aktarın:
 
 ```bash
 make ingest
@@ -68,7 +68,23 @@ make format
 
 ### 5. PEFT / LoRA Fine-Tuning
 
-Hazırlanan veri seti üzerinde default = `Qwen2.5-3B-Instruct` modelini fine-tune edin:
+#### Hiperparametre Konfigürasyonu ve MLOps Tercihleri
+
+Model eğitimi ve PEFT konfigürasyonu `schemas.py` içerisindeki Pydantic veri şeması ile tip denetimine bağlanmıştır:
+
+![Eğitim Hiperparametreleri](https://lh3.googleusercontent.com/d/1OhvyfS5FQyPdjhrSBZyM6zjsRBsWJ_rv)
+
+| Parametre | Değer | MLOps & Donanım Gerekçesi |
+| :--- | :--- | :--- |
+| **Model** | `Qwen2.5-3B-Instruct` | 3B ölçeğiyle Apple Silicon üzerinde hızlı eğitim ve yüksek regülasyon uyumu. |
+| **Batch / Accumulation** | `1 / 8` | Efektif batch boyutu 8 yapılarak OOM(Bellek taşması) riski sıfırlanmış, kararlı gradyan sağlanmıştır. |
+| **Learning Rate** | `2e-4` (Cosine Decay) | LoRA adaptörleri için ideal yakınsama hızı, 5 adımlık `warmup` ile desteklenmiştir. |
+| **Epoch** | `3` | Aşırı öğrenmeyi (overfitting) önleyen optimal eğitim döngüsü. |
+| **LoRA Rank & Alpha** | `r=16, alpha=32` | Karmaşık standartları içselleştirmek için agresif öğrenme, artırılmış adaptör kapasitesi (alpha/r = 2). |
+| **Target Modules** | All-Linear (7 modül) | Attention ve MLP katmanlarının tümü hedeflenerek eksiksiz terminoloji entegrasyonu sağlanmıştır. |
+
+Hazırlanan veri seti üzerinde default = `Qwen2.5-3B-Instruct` modelini fine-tune edin: 
+(Eğer cihazınızda model yüklü değilse *ollama run qwen2.5:3b-instruct* terminal komutu ile modeli cihazınıza yükleyin.)
 
 ```bash
 make train

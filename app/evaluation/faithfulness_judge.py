@@ -34,7 +34,7 @@ Respond strictly in valid JSON:
 """
 
 class FaithfulnessJudge:
-
+    """Implements the LLM-as-a-Judge architecture for model output evaluation. This class is part of the evaluation pipeline."""
     def __init__(
         self,
         model_name: str = "nvidia/nemotron-3-super-120b-a12b:free",

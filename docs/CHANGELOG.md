@@ -133,3 +133,7 @@
   - Örnek çıktı üzerinden değerlendirme yapıldı
   - Proje sınırlılıkları ve gelecek iyileştirilmelerden bahsedildi
 - DESICION.md oluşturuldu
+## Gün-19 20.10.2026
+- LLM-as-a-Judge mimarisi oluşturuldu
+- Fine tuned ve Base Model cevaplarının anlamsal benzerlik skorlarının yanı sıra LLM aracılığıyla doğruluk, dökümana bağlılık ve halüsinasyon riski metrikleri ile değerlendirme sağlandı
+- Kullanıcıya rehberlik etmesi amacıyla DEMO.md oluşturuldu.
